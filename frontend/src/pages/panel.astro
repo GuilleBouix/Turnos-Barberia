@@ -3,40 +3,218 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
-    <div class="min-h-screen text-white p-8">
+    <div class="text-white">
+        <!-- Cabecera -->
         <div class="flex justify-between items-center mb-8">
-            <h1 class="text-2xl font-bold font-playfair">Panel de Control</h1>
-            <button 
-                id="logoutBtn" 
-                class="border border-white px-4 py-2 font-light text-[16px] text-white cursor-pointer
-              hover:bg-white hover:text-black transition-colors duration-200"
-            >
+            <h1 class="text-2xl font-bold font-playfair">PANEL DE CONTROL</h1>
+            <button id="logoutBtn" class="border border-white px-4 py-2 font-light text-[16px] text-white cursor-pointer
+              hover:bg-white hover:text-black transition-colors duration-200">
                 Cerrar Sesión
             </button>
         </div>
         
-        <div id="userInfo" class="mb-6 p-4 border border-[#3d3d3d] rounded">
-            Cargando usuario...
+        <!-- Datos de usuario -->
+        <div id="userInfo" class="bg-[#101010] mb-6 p-4 border border-[#3d3d3d]">
+            Cargando datos...
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="border border-[#3d3d3d] p-4 rounded">
-                <h3 class="text-lg font-semibold mb-2">Turnos</h3>
+        <!-- Botones de configuración -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+            <button id="tab-turnos" class="tab-button bg-[#101010] border border-[#3d3d3d] text-left p-4 cursor-pointer duration-200 hover:bg-white hover:border-white hover:text-black">
+                <h3 class="text-lg font-semibold">Turnos</h3>
                 <p class="text-[#8f8f8f]">Gestionar turnos</p>
-            </div>
+            </button>
             
-            <div class="border border-[#3d3d3d] p-4 rounded">
-                <h3 class="text-lg font-semibold mb-2">Clientes</h3>
-                <p class="text-[#8f8f8f]">Administrar clientes</p>
-            </div>
+            <button id="tab-negocio" class="tab-button bg-[#101010] border border-[#3d3d3d] text-left p-4 cursor-pointer duration-200 hover:bg-white hover:border-white hover:text-black">
+                <h3 class="text-lg font-semibold">Negocio</h3>
+                <p class="text-[#8f8f8f]">Configurar negocio</p>
+            </button>
             
-            <div class="border border-[#3d3d3d] p-4 rounded">
-                <h3 class="text-lg font-semibold mb-2">Cortes</h3>
-                <p class="text-[#8f8f8f]">Tipos de corte</p>
+            <button id="tab-servicios" class="tab-button bg-[#101010] border border-[#3d3d3d] text-left p-4 cursor-pointer duration-200 hover:bg-white hover:border-white hover:text-black">
+                <h3 class="text-lg font-semibold">Servicios</h3>
+                <p class="text-[#8f8f8f]">Gestionar servicios</p>
+            </button>
+        </div>
+
+        <!------------ Contenido de las Tabs ------------>
+        
+        <!-- Tab para gestionar turnos -->
+        <!-- Tab para gestionar turnos -->
+        <div id="content-turnos" class="tab-content hidden p-4 bg-[#101010] border border-[#3d3d3d]">
+            <!-- Título -->
+            <div class="border-b border-[#3d3d3d] pb-3 mb-4">
+                <h4 class="text-xl font-bold text-center">TURNOS</h4>
+            </div>
+
+            <!-- Filtro de fecha -->
+            <div class="mb-4">
+                <label class="block text-sm text-[#8f8f8f] mb-2">Fecha:</label>
+                <input type="date" value="2025-11-23" class="p-2 bg-[#1a1a1a] border border-[#3d3d3d] text-white">
+            </div>
+
+            <!-- Tabla de turnos -->
+            <div class="bg-[#1a1a1a] border border-[#3d3d3d] overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-[#3d3d3d]">
+                            <th class="text-left p-3 text-sm font-semibold">Hora</th>
+                            <th class="text-left p-3 text-sm font-semibold">Cliente</th>
+                            <th class="text-left p-3 text-sm font-semibold">Servicio</th>
+                            <th class="text-left p-3 text-sm font-semibold">Estado</th>
+                            <th class="text-left p-3 text-sm font-semibold">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Fila 1 -->
+                        <tr class="border-b border-[#3d3d3d] hover:bg-[#252525]">
+                            <td class="p-3">09:00</td>
+                            <td class="p-3">Juan Pérez</td>
+                            <td class="p-3">Corte</td>
+                            <td class="p-3">
+                                <span class="text-yellow-400">Pendiente</span>
+                            </td>
+                            <td class="p-3">
+                                <div class="flex space-x-2">
+                                    <button class="text-yellow-400 hover:text-yellow-300 text-sm border border-yellow-400 px-2 py-1 hover:bg-yellow-400 transition-colors">
+                                        Cancelar
+                                    </button>
+                                    <button class="text-red-400 hover:text-red-300 text-sm border border-red-400 px-2 py-1 hover:bg-red-400 transition-colors">
+                                        Eliminar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <!-- Fila 2 -->
+                        <tr class="border-b border-[#3d3d3d] hover:bg-[#252525]">
+                            <td class="p-3">09:30</td>
+                            <td class="p-3">Carla Gómez</td>
+                            <td class="p-3">Corte y Barba</td>
+                            <td class="p-3">
+                                <span class="text-green-400">Confirmado</span>
+                            </td>
+                            <td class="p-3">
+                                <div class="flex space-x-2">
+                                    <button class="text-yellow-400 hover:text-yellow-300 text-sm border border-yellow-400 px-2 py-1 hover:bg-yellow-400 transition-colors">
+                                        Cancelar
+                                    </button>
+                                    <button class="text-red-400 hover:text-red-300 text-sm border border-red-400 px-2 py-1 hover:bg-red-400 transition-colors">
+                                        Eliminar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <!-- Fila 3 - Disponible -->
+                        <tr class="border-b border-[#3d3d3d] hover:bg-[#252525]">
+                            <td class="p-3">10:00</td>
+                            <td class="p-3 text-[#8f8f8f]">— Disponible —</td>
+                            <td class="p-3"></td>
+                            <td class="p-3"></td>
+                            <td class="p-3"></td>
+                        </tr>
+                        
+                        <!-- Fila 4 -->
+                        <tr class="border-b border-[#3d3d3d] hover:bg-[#252525]">
+                            <td class="p-3">10:30</td>
+                            <td class="p-3">Matías López</td>
+                            <td class="p-3">Afeitado</td>
+                            <td class="p-3">
+                                <span class="text-yellow-400">Pendiente</span>
+                            </td>
+                            <td class="p-3">
+                                <div class="flex space-x-2">
+                                    <button class="text-yellow-400 hover:text-yellow-300 text-sm border border-yellow-400 px-2 py-1 hover:bg-yellow-400 transition-colors">
+                                        Cancelar
+                                    </button>
+                                    <button class="text-red-400 hover:text-red-300 text-sm border border-red-400 px-2 py-1 hover:bg-red-400 transition-colors">
+                                        Eliminar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <!-- Fila 5 - Disponible -->
+                        <tr class="border-b border-[#3d3d3d] hover:bg-[#252525]">
+                            <td class="p-3">11:00</td>
+                            <td class="p-3 text-[#8f8f8f]">— Disponible —</td>
+                            <td class="p-3"></td>
+                            <td class="p-3"></td>
+                            <td class="p-3"></td>
+                        </tr>
+                        
+                        <!-- Fila 6 -->
+                        <tr class="hover:bg-[#252525]">
+                            <td class="p-3">11:30</td>
+                            <td class="p-3">Diego Varela</td>
+                            <td class="p-3">Corte</td>
+                            <td class="p-3">
+                                <span class="text-blue-400">Completado</span>
+                            </td>
+                            <td class="p-3">
+                                <div class="flex space-x-2">
+                                    <button class="text-yellow-400 hover:text-yellow-300 text-sm border border-yellow-400 px-2 py-1 hover:bg-yellow-400 transition-colors">
+                                        Cancelar
+                                    </button>
+                                    <button class="text-red-400 hover:text-red-300 text-sm border border-red-400 px-2 py-1 hover:bg-red-400 transition-colors">
+                                        Eliminar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab para configurar negocio -->
+        <div id="content-negocio" class="tab-content hidden p-4 bg-[#101010] border border-[#3d3d3d]">
+            <h4 class="text-lg font-semibold mb-4">
+                Configurar Negocio
+            </h4>
+            <div class="space-y-4">
+                <div>
+                    <label class="block mb-2">Nombre del negocio</label>
+                    <input type="text" id="nombre-negocio" class="w-full p-2 bg-[#1a1a1a] border border-[#3d3d3d] text-white">
+                </div>
+                <div>
+                    <label class="block mb-2">Horario de atención</label>
+                    <div class="flex space-x-4">
+                        <input type="time" id="hora-apertura" class="p-2 bg-[#1a1a1a] border border-[#3d3d3d] text-white">
+                        <input type="time" id="hora-cierre" class="p-2 bg-[#1a1a1a] border border-[#3d3d3d] text-white">
+                    </div>
+                </div>
+                <div>
+                    <button id="guardar-configuracion" class="bg-white text-black px-4 py-2 hover:bg-gray-200 transition-colors duration-200">
+                        Guardar Configuración
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab para gestionar servicios -->
+        <div id="content-servicios" class="tab-content hidden p-4 bg-[#101010] border border-[#3d3d3d]">
+            <h4 class="text-lg font-semibold mb-4">
+                Gestionar Servicios
+            </h4>
+            <div class="mb-4">
+                <h5 class="font-semibold mb-2">Lista de servicios</h5>
+                <div id="servicios-list" class="space-y-2">
+                    <!-- Los servicios se cargarán aquí dinámicamente -->
+                </div>
+            </div>
+            <div class="flex space-x-4">
+                <button id="nuevo-servicio" class="bg-white text-black px-4 py-2 hover:bg-gray-200 transition-colors duration-200">
+                    Nuevo Servicio
+                </button>
+                <button id="editar-servicios" class="border border-white px-4 py-2 hover:bg-white hover:text-black transition-colors duration-200">
+                    Editar
+                </button>
             </div>
         </div>
     </div>
 
+    <!-- Script para manejar autenticación y mostrar datos del usuario -->
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', async function() {
             const token = localStorage.getItem('jwtToken');
@@ -63,12 +241,12 @@ import Layout from '../layouts/Layout.astro';
                 // Mostrar información del usuario
                 userInfoDiv.innerHTML = ''; // Limpiar
                 const welcome = document.createElement('h3');
-                welcome.className = 'text-lg font-semibold';
+                welcome.className = 'text-xl font-bold';
                 welcome.textContent = `Bienvenido, ${data.usuario.nombre_usuario}`;
                 
                 const id = document.createElement('p');
-                id.className = 'text-[#8f8f8f]';
-                id.textContent = `Nombre: ${data.usuario.nombre_usuario}`;
+                id.className = 'text-[#8f8f8f] text-sm';
+                id.textContent = ``;
                 
                 const created = document.createElement('p');
                 created.className = 'text-[#8f8f8f]';
@@ -92,6 +270,31 @@ import Layout from '../layouts/Layout.astro';
                     window.location.href = '/login';
                 });
             }
+        });
+    </script>
+
+    <!-- Script para alternar tabs -->
+    <script type="text/javascript">
+        // Si presiono el boton con id="tab-turnos", muestro el div con id="content-turnos" eliminando la clase hidden
+        document.getElementById('tab-turnos').addEventListener('click', function() {
+            document.querySelectorAll('.tab-content').forEach(function(content) {
+                content.classList.add('hidden');
+            });
+            document.getElementById('content-turnos').classList.remove('hidden');
+        });
+
+        document.getElementById('tab-negocio').addEventListener('click', function() {
+            document.querySelectorAll('.tab-content').forEach(function(content) {
+                content.classList.add('hidden');
+            });
+            document.getElementById('content-negocio').classList.remove('hidden');
+        });
+
+        document.getElementById('tab-servicios').addEventListener('click', function() {
+            document.querySelectorAll('.tab-content').forEach(function(content) {
+                content.classList.add('hidden');
+            });
+            document.getElementById('content-servicios').classList.remove('hidden');
         });
     </script>
 </Layout>
