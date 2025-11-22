@@ -1,0 +1,113 @@
+<!-- Navbar -->
+<header class="fixed top-0 left-0 w-full p-5 z-50 backdrop-blur-xl flex items-center justify-center max-md:justify-between">
+    <img src="/images/icon.png" class="hidden w-10 max-md:block">
+
+    <!-- Menú de navegación (oculto en max-md) -->
+    <nav id="menu" class="flex jus items-center space-x-12 text-sm text-gray-300 font-light max-md:hidden">
+        <a class="nav-link opacity-80 hover:opacity-100 outline-none hover:text-white duration-200" href="/#inicio">
+            Inicio
+        </a>
+
+        <a class="nav-link opacity-80 hover:opacity-100 outline-none hover:text-white duration-200" href="/#nosotros">
+            Sobre Nosotros
+        </a>
+
+        <a class="nav-link opacity-80 hover:opacity-100 outline-none hover:text-white duration-200" href="/#servicios">
+            Nuestros Servicios
+        </a>
+
+        <a class="nav-link opacity-80 hover:opacity-100 outline-none hover:text-white duration-200" href="/#contacto">
+            Contacto
+        </a>
+    </nav>
+
+    <!-- Botón del menú hamburguesa (visible solo en max-md) -->
+    <button id="menu-button" class="hidden items-center justify-center cursor-pointer text-3xl text-gray-300 duration-300 hover:text-white max-md:flex max-md:ml-auto" aria-expanded="false" aria-controls="mobile-menu" aria-label="Abrir menú">
+        <i class='bx bx-menu' id="menu-icon"></i>
+    </button>
+</header>
+
+<!-- Menú desplegable -->
+<div id="mobile-menu" class="hidden fixed top-[70px] left-0 w-full backdrop-blur-xl duration-300 z-40 border-t border-[#3d3d3d]">
+    <nav class="flex flex-col p-5">
+        <a class="nav-link text-gray-300 outline-none py-3 duration-300 hover:text-white" href="/#inicio">
+            Inicio
+        </a>
+
+        <a class="nav-link text-gray-300 outline-none py-3 duration-300 hover:text-white" href="/#nosotros">
+            Sobre Nosotros
+        </a>
+
+        <a class="nav-link text-gray-300 outline-none py-3 duration-300 hover:text-white" href="/#servicios">
+            Nuestros Servicios
+        </a>
+
+        <a class="nav-link text-gray-300 outline-none py-3 duration-300 hover:text-white" href="/#contacto">
+            Contacto
+        </a>
+    </nav>
+</div>
+
+<!-- Scripts -->
+<script defer>
+    const menuButton = document.getElementById('menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = document.getElementById('menu-icon');
+
+    menuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+        
+        if (!mobileMenu.classList.contains('hidden')) {
+            menuIcon.classList.remove('bx-menu');
+            menuIcon.classList.add('bx-x');
+        } else {
+            menuIcon.classList.remove('bx-x');
+            menuIcon.classList.add('bx-menu');
+        }
+    });
+
+    // Cerrar el menú al hacer clic en un enlace
+    document.querySelectorAll('#mobile-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+            menuIcon.classList.remove('bx-x');
+            menuIcon.classList.add('bx-menu');
+        });
+    });
+
+    // Cerrar el menú al hacer clic fuera de él
+    document.addEventListener('click', (event) => {
+        if (!menuButton.contains(event.target) && !mobileMenu.contains(event.target)) {
+            mobileMenu.classList.add('hidden');
+            menuIcon.classList.remove('bx-x');
+            menuIcon.classList.add('bx-menu');
+        }
+    });
+</script>
+
+<script defer>
+    const links = document.querySelectorAll('.nav-link');
+
+    const sections = [...links].map(link => {
+        const id = link.getAttribute('href').replace('#', '');
+        return document.getElementById(id);
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const id = entry.target.id;
+            const link = document.querySelector(`a[href="#${id}"]`);
+
+            if (entry.isIntersecting) {
+                links.forEach(l => l.classList.remove('text-white'));
+                link.classList.add('text-white');
+            }
+        });
+    }, {
+        threshold: 0.5
+    });
+
+    sections.forEach(section => {
+        if (section) observer.observe(section);
+    });
+</script>

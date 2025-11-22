@@ -1,0 +1,64 @@
+---
+import "../styles/global.css";
+import LoadingSpinner from "../components/LoadingSpinner.astro";
+
+interface Props {
+    title?: string;
+    description?: string;
+    lang?: string;
+}
+
+const {
+    title = 'BeardCut - Barbería',
+    description = '',
+    lang = 'es'
+} = Astro.props as Props;
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="shortcut icon" href="favicon.svg" type="image/x-icon">
+        <title>{title}</title>
+        {description && <meta name="description" content={description} />}
+        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    </head>
+    <body>
+        <LoadingSpinner />
+        <script is:inline>
+            // --- Mostrar loader al cargar la página ---
+            window.showLoader();
+            window.addEventListener("load", () => window.hideLoader());
+
+            // --- Parche global para fetch ---
+            const originalFetch = window.fetch;
+            window.fetch = async (...args) => {
+                window.showLoader();
+                try {
+                    const res = await originalFetch(...args);
+                    window.hideLoader();
+                    return res;
+                } catch (err) {
+                    window.showLoader(); // Lo mantenés visible si hay error
+                    throw err;
+                }
+            };
+
+            // --- Para cualquier promesa larga ---
+            const _then = Promise.prototype.then;
+            Promise.prototype.then = function (resolve, reject) {
+                window.showLoader();
+                return _then.call(this, 
+                    (v) => { window.hideLoader(); return resolve?.(v) ?? v; },
+                    (err) => { window.showLoader(); return reject?.(err) ?? err; }
+                );
+            };
+        </script>
+
+        <main class="m-5">
+            <slot />
+        </main>
+    </body>
+</html>

@@ -1,0 +1,20 @@
+---
+const { img, specialization, name, experience } = Astro.props;
+---
+
+<div class="flex-col w-80 hover:scale-101 duration-300
+max-xl:w-70 max-lg:w-60 max-md:w-full">
+  <img src={img} alt={name} class="w-80 h-90 object-cover mb-2 grayscale-100 hover:grayscale-0 duration-300 max-md:w-full max-md:h-full" />
+  
+    <strong class="text-[#8F8F8F] text-sm font-medium">
+        {specialization}
+    </strong>
+
+    <h3 class="font-bold text-3xl text-white text-left mb-2">
+        {name}
+    </h3>
+  
+    <p class="text-[#8F8F8F] text-sm">
+        {experience}
+    </p>
+</div>

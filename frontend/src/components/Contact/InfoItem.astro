@@ -1,0 +1,17 @@
+---
+const { icon, title, text } = Astro.props;
+---
+
+<div class="flex items-start gap-2 mt-8 text-md">
+    <i class={`text-[#8F8F8F] text-lg ${icon}`}></i>
+
+    <div class="flex flex-col">
+        <strong class="text-[#8F8F8F]">
+            {title}
+        </strong>
+
+        <p class="text-[#8F8F8F]">
+            {text}
+        </p>
+    </div>
+</div>

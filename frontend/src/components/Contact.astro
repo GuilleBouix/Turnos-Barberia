@@ -1,0 +1,57 @@
+---
+import InfoItem from './Contact/InfoItem.astro';
+---
+
+<section id="contacto" class="min-h-screen px-5 md:px-8 lg:px-30 py-20
+max-xl:px-5">
+    <h2 class="font-playfair font-semibold text-3xl text-white mb-8">
+        CONTACTO
+    </h2>
+
+    <!-- Formulario de Contacto -->
+    <div class="flex gap-6
+    max-lg:flex-col">
+        <div class="w-full max-xl:h-auto">
+            <h1 class="text-white font-light text-xl mb-4">
+                ¿Listo para tu nuevo look?
+            </h1>
+
+            <p class="text-[#8F8F8F]">
+                Reserva tu cita ahora mismo y experimentá la transformación que merecés. Nuestro equipo de estilistas expertos está listo para brindarte un servicio personalizado y de alta calidad. No esperes más, ¡tu nuevo estilo te está esperando!
+            </p>
+
+            <InfoItem 
+                icon="bx bx-map"
+                title="Dirección"
+                text="Av. Beltrame N3360, Oberá, Misiones"
+            />
+
+            <InfoItem 
+                icon="bx bx-phone"
+                title="Teléfono"
+                text="+54 9 3711-365214"
+            />
+
+            <InfoItem 
+                icon="bx bx-envelope"
+                title="Email"
+                text="contact@beardcut.com"
+            />
+
+            <div class="mt-8">
+                <a href="/appointment" class="mt-10 border border-white p-4 text-white cursor-pointer
+                hover:bg-white hover:text-black transition-colors duration-200">
+                    Reservar Turno Online
+                </a>
+
+            </div>
+        </div>
+
+        <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3539.3172363814338!2d-55.107507525313714!3d-27.490507817591695!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94f8f51736c0d97d%3A0x29975b8967eb0de0!2sAv.%20Beltrame%2C%20N3360%20Ober%C3%A1%2C%20Misiones!5e0!3m2!1ses!2sar!4v1763651701976!5m2!1ses!2sar" allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade" 
+            class="w-full max-lg:w-auto max-lg:h-130 max-lg:mt-4">
+        </iframe>
+    </div>
+</section>

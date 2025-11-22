@@ -1,0 +1,103 @@
+---
+import Table from '../components/Services/Table.astro';
+---
+
+<section id="servicios" class="min-h-screen px-5 md:px-5 lg:px-30">
+    <h2 class="font-playfair font-semibold text-3xl text-white mt-20 mb-8">
+        NUESTROS SERVICIOS
+    </h2>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <Table 
+            title="CORTES" 
+            items={[
+                { name: 'Corte clásico', price: '$ 800' },
+                { name: 'Corte moderno', price: '$ 1,000' },
+                { name: 'Fade y degradado', price: '$ 900' },
+                { name: 'Diseño de líneas', price: '$ 600' }
+            ]}
+        />
+
+        <Table 
+            title="BARBA" 
+            items={[
+                { name: 'Arreglo de barba', price: '$ 500' },
+                { name: 'Diseño de barba', price: '$ 700' },
+                { name: 'Afeitado tradicional', price: '$ 800' }
+            ]}
+        />
+
+        <Table 
+            title="ADICIONALES & COMBOS" 
+            items={[
+                { name: 'Tinte capilar', price: '$ 1,500' },
+                { name: 'Tratamiento capilar', price: '$ 1,200' },
+                { name: 'Masaje craneal', price: '$ 400' },
+                { name: 'Cejas', price: '$ 300' }
+            ]}
+        />
+    </div>
+
+    <h3 class="font-playfair font-semibold text-3xl text-white mt-20 mb-8">
+        GALERÍA DE TRABAJOS
+    </h3>
+
+    <!-- Galería de Trabajos -->
+    <div>
+        <!-- Primera fila -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+            <div class="overflow-hidden">
+                <img 
+                    src="/images/gallery-1.jpg" 
+                    alt="Galería 1"
+                    class="w-full h-48 sm:h-56 md:h-100 object-cover hover:scale-105 grayscale-100 hover:grayscale-0 transition-transform duration-300"
+                    loading="lazy"
+                >
+            </div>
+            <div class="overflow-hidden">
+                <img 
+                    src="/images/gallery-2.jpg" 
+                    alt="Galería 2"
+                    class="w-full h-48 sm:h-56 md:h-100 object-cover hover:scale-105 grayscale-100 hover:grayscale-0  transition-transform duration-300"
+                    loading="lazy"
+                >
+            </div>
+            <div class="overflow-hidden">
+                <img 
+                    src="/images/gallery-3.jpg" 
+                    alt="Galería 3"
+                    class="w-full h-48 sm:h-56 md:h-100 object-cover hover:scale-105 grayscale-100 hover:grayscale-0  transition-transform duration-300"
+                    loading="lazy"
+                >
+            </div>
+        </div>
+
+        <!-- Segunda fila -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="overflow-hidden">
+                <img 
+                    src="/images/gallery-4.jpg" 
+                    alt="Galería 4"
+                    class="w-full h-48 sm:h-56 md:h-100 object-cover hover:scale-105 grayscale-100 hover:grayscale-0  transition-transform duration-300"
+                    loading="lazy"
+                >
+            </div>
+            <div class="overflow-hidden">
+                <img 
+                    src="/images/gallery-5.jpg" 
+                    alt="Galería 5"
+                    class="w-full h-48 sm:h-56 md:h-100 object-cover hover:scale-105 grayscale-100 hover:grayscale-0  transition-transform duration-300"
+                    loading="lazy"
+                >
+            </div>
+            <div class="overflow-hidden">
+                <img 
+                    src="/images/gallery-6.jpg" 
+                    alt="Galería 6"
+                    class="w-full h-48 sm:h-56 md:h-100 object-cover hover:scale-105 grayscale-100 hover:grayscale-0  transition-transform duration-300"
+                    loading="lazy"
+                >
+            </div>
+        </div>
+    </div>
+</section>

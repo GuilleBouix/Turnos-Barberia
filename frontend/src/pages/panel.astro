@@ -1,0 +1,97 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+    <div class="min-h-screen text-white p-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold font-playfair">Panel de Control</h1>
+            <button 
+                id="logoutBtn" 
+                class="border border-white px-4 py-2 font-light text-[16px] text-white cursor-pointer
+              hover:bg-white hover:text-black transition-colors duration-200"
+            >
+                Cerrar Sesión
+            </button>
+        </div>
+        
+        <div id="userInfo" class="mb-6 p-4 border border-[#3d3d3d] rounded">
+            Cargando usuario...
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="border border-[#3d3d3d] p-4 rounded">
+                <h3 class="text-lg font-semibold mb-2">Turnos</h3>
+                <p class="text-[#8f8f8f]">Gestionar turnos</p>
+            </div>
+            
+            <div class="border border-[#3d3d3d] p-4 rounded">
+                <h3 class="text-lg font-semibold mb-2">Clientes</h3>
+                <p class="text-[#8f8f8f]">Administrar clientes</p>
+            </div>
+            
+            <div class="border border-[#3d3d3d] p-4 rounded">
+                <h3 class="text-lg font-semibold mb-2">Cortes</h3>
+                <p class="text-[#8f8f8f]">Tipos de corte</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', async function() {
+            const token = localStorage.getItem('jwtToken');
+            const userInfoDiv = document.getElementById('userInfo');
+            
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Token inválido');
+                }
+
+                const data = await response.json();
+                
+                // Mostrar información del usuario
+                userInfoDiv.innerHTML = ''; // Limpiar
+                const welcome = document.createElement('h3');
+                welcome.className = 'text-lg font-semibold';
+                welcome.textContent = `Bienvenido, ${data.usuario.nombre_usuario}`;
+                
+                const id = document.createElement('p');
+                id.className = 'text-[#8f8f8f]';
+                id.textContent = `Nombre: ${data.usuario.nombre_usuario}`;
+                
+                const created = document.createElement('p');
+                created.className = 'text-[#8f8f8f]';
+                created.textContent = `Miembro desde: ${new Date(data.usuario.creado_en).toLocaleDateString()}`;
+                
+                userInfoDiv.appendChild(welcome);
+                userInfoDiv.appendChild(id);
+                userInfoDiv.appendChild(created);
+                
+            } catch (error) {
+                localStorage.removeItem('jwtToken');
+                localStorage.removeItem('userData');
+                window.location.href = '/login';
+            }
+
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    localStorage.removeItem('jwtToken');
+                    localStorage.removeItem('userData');
+                    window.location.href = '/login';
+                });
+            }
+        });
+    </script>
+</Layout>

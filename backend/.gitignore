@@ -1,0 +1,26 @@
+# Logs
+*.log
+# Temporary files
+*.tmp
+*~
+
+*.bak
+# Environment files (containing secrets, API keys, credentials)
+.env
+*.env
+.env.*
+
+# Local configuration that shouldn't be shared
+*.local
+
+### Flask ###
+# flask specific files
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+
+instance/
+migrations/

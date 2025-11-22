@@ -1,0 +1,43 @@
+---
+// src/components/Table.astro
+export interface TableItem {
+  name: string;
+  price: string;
+}
+
+export interface Props {
+  title: string;
+  items: TableItem[];
+  className?: string;
+}
+
+const { title, items, className = "" } = Astro.props;
+---
+
+<div class={`overflow-hidden shadow-lg ${className}`}>
+  <div class="py-3">
+    <h3 class="font-bold text-xl text-white">
+      {title}
+    </h3>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <tbody>
+        
+        {items.map((item, index) => (
+          <tr class={index < items.length - 1 ? 'border-b border-[#8F8F8F]' : ''}>
+            <td class="py-4 text-[#8F8F8F]">
+              {item.name}
+            </td>
+
+            <td class="py-4 text-right text-white font-medium">
+              {item.price}
+            </td>
+          </tr>
+        ))}
+
+      </tbody>
+    </table>
+  </div>
+</div>

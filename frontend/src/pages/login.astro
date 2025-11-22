@@ -1,0 +1,100 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+    <!-- Formulario de login -->
+    <form id="loginForm" 
+        class="bg-[#101010] flex flex-col h-150 ml-100 mr-100 justify-center items-center border border-[#3d3d3d] p-10 text-white gap-4
+            max-xl:ml-50 max-xl:mr-50
+            max-lg:ml-20 max-lg:mr-20
+            max-md:ml-10 max-md:mr-10 max-md:p-8
+            max-sm:ml-5 max-sm:mr-5 max-sm:p-6
+            max-2xs:ml-0 max-2xs:mr-0 max-2xs:w-full
+            max-1xs:p-4">
+
+        <img src="/images/logo.png" 
+            class="w-65 mb-10 max-md:w-60 max-sm:w-55 max-2xs:w-50" 
+            alt="">
+
+        <div id="errorDiv" class="hidden font-light text-red-500 text-sm w-75 max-md:w-60 max-sm:w-50 max-2xs:w-full"></div>
+
+        <div class="flex flex-col w-75 max-md:w-80 max-sm:w-90 max-2xs:w-full">
+            <label for="nombre_usuario" class="text-[#8f8f8f]">Usuario:</label>
+            <input 
+                type="text"
+                id="nombre_usuario"
+                required
+                placeholder="admin"
+                class="bg-none border px-2 py-2 border-[#3d3d3d] focus:border-white outline-none duration-200 w-full"
+            />
+        </div>
+
+        <div class="flex flex-col w-75 max-md:w-80 max-sm:w-90 max-2xs:w-full">
+            <label for="contrasena" class="text-[#8f8f8f]">Contraseña:</label>
+            <input 
+                type="password"
+                id="contrasena"
+                required
+                placeholder="Contraseña"
+                class="bg-none border px-2 py-2 border-[#3d3d3d] focus:border-white outline-none duration-200 w-full"
+            />
+        </div>
+
+        <button 
+            type="submit" 
+            id="submitBtn" 
+            class="bg-white w-75 p-4 mt-2 text-black cursor-pointer hover:opacity-90 duration-200
+                max-md:w-80 max-sm:w-90 max-2xs:w-full">
+            Ingresar
+        </button>
+    </form>
+
+
+    <script type="text/javascript">
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const errorDiv = document.getElementById('errorDiv');
+            const nombreUsuario = document.getElementById('nombre_usuario').value;
+            const contrasena = document.getElementById('contrasena').value;
+
+            errorDiv.classList.add('hidden');
+            errorDiv.textContent = '';
+            
+            submitBtn.textContent = 'Validando...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        nombre_usuario: nombreUsuario,
+                        contrasena: contrasena
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    localStorage.setItem('jwtToken', data.token);
+                    localStorage.setItem('userData', JSON.stringify(data.usuario));
+                    window.location.href = '/panel';
+                } else {
+                    errorDiv.textContent = data.error || 'Error en el login';
+                    errorDiv.classList.remove('hidden');
+                }
+            } catch (error) {
+                errorDiv.textContent = 'Error de conexión con el servidor';
+                errorDiv.classList.remove('hidden');
+            } finally {
+                submitBtn.textContent = 'Ingresar';
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</Layout>
