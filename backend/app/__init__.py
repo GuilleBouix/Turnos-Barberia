@@ -4,6 +4,7 @@ from app.config import Config
 from app.database import db
 from app.extensions import jwt
 
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -17,7 +18,10 @@ def create_app():
     
     # Registrar blueprints
     from app.auth.routes import auth_bp
+    from app.business.routes import business_bp
+    
     app.register_blueprint(auth_bp)
+    app.register_blueprint(business_bp)
     
     # Crear tablas
     with app.app_context():

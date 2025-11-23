@@ -2,15 +2,174 @@
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+
+// Datos de ejemplo para la demo
+const diasSemana = [
+  { fecha: 'Lunes 24', disponible: true, seleccionado: false },
+  { fecha: 'Martes 25', disponible: true, seleccionado: true },
+  { fecha: 'Miércoles 26', disponible: true, seleccionado: false },
+  { fecha: 'Jueves 27', disponible: true, seleccionado: false },
+  { fecha: 'Viernes 28', disponible: true, seleccionado: false },
+  { fecha: 'Sábado 29', disponible: false, seleccionado: false },
+  { fecha: 'Domingo 30', disponible: false, seleccionado: false }
+];
+
+const horarios = [
+  { hora: '09:00', disponible: true, estado: 'disponible' },
+  { hora: '09:30', disponible: true, estado: 'disponible' },
+  { hora: '10:00', disponible: false, estado: 'reservado' },
+  { hora: '10:30', disponible: true, estado: 'disponible' },
+  { hora: '11:00', disponible: true, estado: 'disponible' },
+  { hora: '11:30', disponible: false, estado: 'cerrado' }
+];
+
+const servicios = ['Corte', 'Corte y Barba', 'Afeitado', 'Tinte', 'Peinado'];
 ---
 
 <Layout>
 	<Navbar />
-        <section class="min-h-screen flex flex-col justify-center items-center px-30 text-center
-        max-xl:px-5">
-            <form action="" class="bg-[#151515] border border-[#3d3d3d] text-[#8f8f8f] p-4">
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Adipisci impedit quo consectetur sint quod exercitationem dolorum doloribus laboriosam tempore aperiam? Illo temporibus suscipit adipisci similique alias numquam nam facilis corporis?
-            </form>
+        <section class="min-h-screen flex flex-col items-center justify-center py-12 px-4
+        sm:px-6 lg:px-8">
+            <div class="w-full max-w-3xl mx-auto">
+                <!-- Contenedor principal del formulario -->
+                <div class="bg-[#101010] border border-[#3d3d3d] text-[#8f8f8f] p-4
+                sm:p-6 lg:p-8">
+                    
+                    <h1 class="text-2xl font-bold font-playfair mb-8 text-white
+                    md:text-3xl">RESERVAR UN TURNO</h1>
+
+                    <!-- Sección 1: Elegir fecha -->
+                    <div class="mb-8 text-left">
+                        <h2 class="text-lg font-semibold text-white mb-4
+                        sm:text-xl">1) Elegí una fecha:</h2>
+                        
+                        <!-- Navegación de semana -->
+                        <div class="flex justify-between items-center mb-6 bg-[#1a1a1a] p-3 border border-[#3d3d3d]
+                        flex-col sm:flex-row gap-3 sm:gap-0">
+                            <button class="flex items-center text-white hover:bg-white hover:text-black transition-colors duration-200 border border-white px-3 py-2 cursor-pointer
+                            w-full sm:w-auto justify-center text-sm sm:text-base">
+                                <i class='bx bxs-chevrons-left text-lg'></i>
+                            </button>
+
+                            <span class="text-white font-medium text-center text-sm sm:text-base">24 - 30 Nov 2025</span>
+                            
+                            <button class="flex items-center text-white hover:bg-white hover:text-black transition-colors duration-200 border border-white px-3 py-2 cursor-pointer
+                            w-full sm:w-auto justify-center text-sm sm:text-base">
+                                <i class='bx bxs-chevrons-right text-lg'></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Días disponibles -->
+                        <div class="mb-4">
+                            <h3 class="text-[#8f8f8f] mb-3 text-sm sm:text-base">
+                                Días disponibles:
+                            </h3>
+                            
+                            <div class="grid grid-cols-2 gap-2
+                            sm:grid-cols-3 sm:gap-3
+                            md:grid-cols-4">
+                                {diasSemana.map((dia) => (
+                                    <button 
+                                        class={`py-2 px-2 text-center transition-all duration-200 cursor-pointer border text-xs sm:text-sm
+                                        ${dia.disponible 
+                                            ? dia.seleccionado 
+                                                ? 'bg-white text-black border-white' 
+                                                : 'bg-[#101010] border-[#3d3d3d] text-white hover:bg-white hover:border-white hover:text-black' 
+                                            : 'bg-[#1a1a1a] border-[#3d3d3d] text-[#5a5a5a] cursor-not-allowed'
+                                        }`}
+                                        disabled={!dia.disponible}
+                                    >
+                                        {dia.fecha}
+                                    </button>
+                                ))}
+                            </div>
+                            
+                            <p class="text-[#5a5a5a] text-xs sm:text-sm mt-2">
+                                (Sábado 29 y Domingo 30 no disponibles).
+                            </p>
+                        </div>
+                        
+                        <!-- Día seleccionado -->
+                        <div class="bg-[#1a1a1a] p-3 border border-[#3d3d3d] text-sm sm:text-base">
+                            <span class="text-[#8f8f8f]">Día seleccionado: </span>
+                            <span class="text-white font-medium">Martes 25</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección 2: Horarios disponibles -->
+                    <div class="mb-8 text-left">
+                        <h2 class="text-lg font-semibold text-white mb-4
+                        sm:text-xl">2) Horarios disponibles para Martes 25:</h2>
+                        
+                        <div class="bg-[#1a1a1a] border border-[#3d3d3d] overflow-hidden">
+                            <div class="bg-[#101010] p-3 text-center border-b border-[#3d3d3d]">
+                                <h3 class="text-white font-medium text-sm sm:text-base">Horarios disponibles</h3>
+                            </div>
+                            <div class="p-3 sm:p-4">
+                                {horarios.map((horario) => (
+                                    <div class="flex justify-between items-center py-2 border-b border-[#3d3d3d] last:border-b-0
+                                    flex-col sm:flex-row gap-2 sm:gap-0">
+                                        <span class="text-white text-sm sm:text-base">{horario.hora}</span>
+                                        {horario.estado === 'disponible' ? (
+                                            <button class="text-white hover:bg-white hover:text-black transition-colors duration-200 border border-white px-3 py-1 cursor-pointer
+                                            w-full sm:w-auto text-xs sm:text-sm">
+                                                Reservar
+                                            </button>
+                                        ) : horario.estado === 'reservado' ? (
+                                            <span class="text-[#8f8f8f] px-3 py-1 text-xs sm:text-sm text-center w-full sm:w-auto">— Reservado —</span>
+                                        ) : (
+                                            <span class="text-[#5a5a5a] px-3 py-1 text-xs sm:text-sm text-center w-full sm:w-auto">— Cerrado —</span>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección 3: Datos del cliente -->
+                    <div class="mb-6 text-left">
+                        <h2 class="text-lg font-semibold text-white mb-4
+                        sm:text-xl">3) Datos del cliente:</h2>
+                        
+                        <form class="space-y-4">
+                            <div>
+                                <label class="block text-[#8f8f8f] mb-2 text-sm sm:text-base">Nombre:</label>
+                                <input type="text" class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-sm sm:text-base" placeholder="Ingresa tu nombre" />
+                            </div>
+                            
+                            <div>
+                                <label class="block text-[#8f8f8f] mb-2 text-sm sm:text-base">Teléfono:</label>
+                                <input type="tel" class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-sm sm:text-base" placeholder="Ingresa tu teléfono" />
+                            </div>
+                            
+                            <div>
+                                <label class="block text-[#8f8f8f] mb-2 text-sm sm:text-base">Servicio:</label>
+                                <select class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-sm sm:text-base">
+                                    {servicios.map((servicio) => (
+                                        <option class="text-sm sm:text-base">{servicio}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="w-full bg-white text-black px-4 py-3 font-light text-sm sm:text-base cursor-pointer
+                              hover:bg-gray-200 transition-colors duration-200 border border-white">
+                                Confirmar Reserva
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Mensaje de confirmación -->
+                    <div class="bg-[#1a1a1a] border border-[#3d3d3d] p-3 sm:p-4">
+                        <p class="text-white text-left text-sm sm:text-base">
+                            <span class="font-semibold">¡Listo!</span> Tu turno quedó reservado para el Martes 25 a las 09:30.
+                            <br class="hidden sm:block" />
+                            <span class="text-[#8f8f8f] text-xs sm:text-sm">Abre este enlace para cancelar tu turno:</span>
+                            <br />
+                            <a href="#" target="_blank" class="text-blue-500 underline text-xs sm:text-sm">www.beardcut-barberia.com/cancelar/t654vggHJ5Tg55t4d4GH4D</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
         </section>
 	<Footer />
 </Layout>
