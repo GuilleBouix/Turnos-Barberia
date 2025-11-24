@@ -1,20 +1,360 @@
 <!-- Tab para gestionar servicios -->
-<div id="content-servicios" class="tab-content hidden p-4 bg-[#101010] border border-[#3d3d3d]">
-    <h4 class="text-lg font-semibold mb-4">
-        Gestionar Servicios
-    </h4>
-    <div class="mb-4">
-        <h5 class="font-semibold mb-2">Lista de servicios</h5>
-        <div id="servicios-list" class="space-y-2">
-            <!-- Los servicios se cargarán aquí dinámicamente -->
+<div id="content-servicios" class="tab-content hidden p-6 bg-[#101010] border border-[#3d3d3d]">
+    <!-- Encabezado -->
+    <div class="border-b border-[#3d3d3d] pb-4 mb-6">
+        <h4 class="text-2xl font-bold mb-1">Gestionar Servicios</h4>
+        <p class="text-[#8f8f8f] text-sm">Administra los servicios y precios de tu barbería</p>
+    </div>
+
+    <!-- Mensaje de estado -->
+    <div id="servicios-message" class="hidden mb-4 p-4"></div>
+
+    <!-- Lista de servicios -->
+    <div class="mb-6">
+        <h5 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            Lista de Servicios
+        </h5>
+        <div id="servicios-list" class="space-y-3">
+            <!-- Servicios se cargan dinámicamente aquí -->
         </div>
     </div>
-    <div class="flex space-x-4">
-        <button id="nuevo-servicio" class="bg-white text-black px-4 py-2 hover:bg-gray-200 transition-colors duration-200">
+
+    <!-- Botones de acción -->
+    <div class="flex flex-col sm:flex-row gap-4 pt-4 border-t border-[#3d3d3d]">
+        <button 
+            id="agregar-servicio" 
+            class="flex-1 bg-white text-black px-6 py-3 hover:bg-gray-200 transition-colors duration-300 cursor-pointer"
+        >
             Nuevo Servicio
         </button>
-        <button id="editar-servicios" class="border border-white px-4 py-2 hover:bg-white hover:text-black transition-colors duration-200">
-            Editar
+        <button 
+            id="guardar-servicios" 
+            class="flex-1 border border-white text-white px-6 py-3 hover:bg-white hover:text-black transition-colors duration-300 cursor-pointer"
+        >
+            Guardar Servicios
         </button>
     </div>
 </div>
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        // Cargar servicios al iniciar
+        cargarServicios();
+        
+        // Event listeners
+        document.getElementById('agregar-servicio').addEventListener('click', agregarServicio);
+        document.getElementById('guardar-servicios').addEventListener('click', guardarServicios);
+    });
+
+    // Cargar servicios desde la API
+    async function cargarServicios() {
+        try {
+            const token = localStorage.getItem('jwtToken');
+            if (!token) {
+                mostrarMensajeServicios('No hay sesión activa', 'error');
+                return;
+            }
+
+            const response = await fetch('http://localhost:5000/api/servicios/', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al cargar servicios');
+            }
+
+            const data = await response.json();
+            
+            if (data.success) {
+                renderizarServicios(data.servicios);
+                mostrarMensajeServicios('Servicios cargados correctamente', 'success');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            mostrarMensajeServicios('Error al cargar servicios', 'error');
+        }
+    }
+
+    // Renderizar lista de servicios
+    function renderizarServicios(servicios) {
+        const container = document.getElementById('servicios-list');
+        container.innerHTML = '';
+
+        // Agrupar servicios por categoría
+        const serviciosPorCategoria = {};
+        servicios.forEach(servicio => {
+            if (!serviciosPorCategoria[servicio.categoria]) {
+                serviciosPorCategoria[servicio.categoria] = [];
+            }
+            serviciosPorCategoria[servicio.categoria].push(servicio);
+        });
+
+        // Renderizar por categorías
+        Object.keys(serviciosPorCategoria).forEach(categoria => {
+            // Header de categoría
+            const categoriaHeader = document.createElement('div');
+            categoriaHeader.className = 'bg-[#1a1a1a] border border-[#3d3d3d] p-4 mt-8 mb-2';
+            categoriaHeader.innerHTML = `
+                <h6 class="font-semibold text-white text-sm">${categoria}</h6>
+            `;
+            container.appendChild(categoriaHeader);
+
+            // Servicios de esta categoría
+            serviciosPorCategoria[categoria].forEach(servicio => {
+                const servicioDiv = document.createElement('div');
+                servicioDiv.className = 'bg-[#0a0a0a] border border-[#3d3d3d] p-4';
+                servicioDiv.innerHTML = `
+                    <div class="flex flex-col md:flex-row md:items-center gap-4">
+                        <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                                <label class="text-[#8f8f8f]">Nombre del Servicio</label>
+                                <input 
+                                    type="text" 
+                                    class="servicio-nombre outline-none w-full bg-[#1a1a1a] border border-[#3d3d3d] p-2 text-white text-sm focus:border-white transition-colors duration-300"
+                                    value="${servicio.nombre_servicio || ''}"
+                                    data-id="${servicio.id}"
+                                />
+                            </div>
+                            <div>
+                                <label class="text-[#8f8f8f]">Categoría</label>
+                                <input 
+                                    type="text" 
+                                    class="servicio-categoria outline-none w-full bg-[#1a1a1a] border border-[#3d3d3d] p-2 text-white text-sm focus:border-white transition-colors duration-300"
+                                    value="${servicio.categoria || ''}"
+                                    data-id="${servicio.id}"
+                                />
+                            </div>
+                            <div>
+                                <label class="text-[#8f8f8f]">Precio ($)</label>
+                                <input 
+                                    type="number" 
+                                    step="0.01"
+                                    min="0"
+                                    class="servicio-precio outline-none w-full bg-[#1a1a1a] border border-[#3d3d3d] p-2 text-white text-sm focus:border-white transition-colors duration-300"
+                                    value="${servicio.precio || 0}"
+                                    data-id="${servicio.id}"
+                                />
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 mt-6">
+                            <label class="flex items-center gap-2 text-[#8f8f8f]">
+                                <input 
+                                    type="checkbox" 
+                                    class="servicio-activo w-4 h-4"
+                                    ${servicio.activo ? 'checked' : ''}
+                                    data-id="${servicio.id}"
+                                />
+                                Activo
+                            </label>
+                            <button 
+                                class="eliminar-servicio bg-transparent text-red-700 px-3 py-2 hover:bg-red-700 hover:text-white border border-red-700 transition-colors duration-300 cursor-pointer text-sm"
+                                data-id="${servicio.id}"
+                            >
+                                <i class='bx bx-trash-alt'></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(servicioDiv);
+            });
+        });
+
+        // Agregar event listeners para eliminar
+        document.querySelectorAll('.eliminar-servicio').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const servicioId = this.getAttribute('data-id');
+                eliminarServicio(servicioId);
+            });
+        });
+    }
+
+    // Agregar nuevo servicio
+    function agregarServicio() {
+        const container = document.getElementById('servicios-list');
+        
+        const nuevoServicioDiv = document.createElement('div');
+        nuevoServicioDiv.className = 'bg-[#0a0a0a] border border-[#3d3d3d] p-4 border-l-4 border-l-white';
+        nuevoServicioDiv.innerHTML = `
+            <div class="flex flex-col md:flex-row md:items-center gap-4">
+                <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div>
+                        <label class=" text-[#8f8f8f]">Nombre del Servicio</label>
+                        <input 
+                            type="text" 
+                            class="servicio-nombre outline-none w-full bg-[#1a1a1a] border border-[#3d3d3d] p-2 text-white text-sm focus:border-white transition-colors duration-300"
+                            placeholder="Ej: Corte Premium"
+                            data-id="nuevo"
+                        />
+                    </div>
+                    <div>
+                        <label class=" text-[#8f8f8f]">Categoría</label>
+                        <input 
+                            type="text" 
+                            class="servicio-categoria outline-none w-full bg-[#1a1a1a] border border-[#3d3d3d] p-2 text-white text-sm focus:border-white transition-colors duration-300"
+                            placeholder="Ej: CORTES"
+                            data-id="nuevo"
+                        />
+                    </div>
+                    <div>
+                        <label class=" text-[#8f8f8f]">Precio ($)</label>
+                        <input 
+                            type="number" 
+                            step="0.01"
+                            min="0"
+                            class="servicio-precio outline-none w-full bg-[#1a1a1a] border border-[#3d3d3d] p-2 text-white text-sm focus:border-white transition-colors duration-300"
+                            value="0"
+                            data-id="nuevo"
+                        />
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 mt-6">
+                    <label class="flex items-center gap-2 text-[#8f8f8f]">
+                        <input 
+                            type="checkbox" 
+                            class="servicio-activo w-4 h-4"
+                            checked
+                            data-id="nuevo"
+                        />
+                        Activo
+                    </label>
+
+                    <button 
+                        class="eliminar-servicio border border-red-700 bg-transparent text-red-700 px-3 py-2 hover:bg-red-700 hover:text-white transition-colors duration-300 cursor-pointer text-sm"
+                        data-id="nuevo"
+                    >
+                        <i class='bx bx-trash-alt'></i>
+                    </button>
+                </div>
+            </div>
+        `;
+
+        container.appendChild(nuevoServicioDiv);
+
+        // Event listener para eliminar este nuevo servicio
+        nuevoServicioDiv.querySelector('.eliminar-servicio').addEventListener('click', function() {
+            nuevoServicioDiv.remove();
+        });
+    }
+
+    // Guardar todos los servicios
+    async function guardarServicios() {
+        try {
+            const token = localStorage.getItem('jwtToken');
+            if (!token) {
+                mostrarMensajeServicios('No hay sesión activa', 'error');
+                return;
+            }
+
+            const serviciosData = recopilarServicios();
+            
+            const response = await fetch('http://localhost:5000/api/servicios/guardar-multiples', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ servicios: serviciosData }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.mensaje || 'Error al guardar servicios');
+            }
+
+            mostrarMensajeServicios('Servicios guardados correctamente', 'success');
+            
+            // Recargar servicios para obtener IDs de los nuevos
+            setTimeout(() => {
+                cargarServicios();
+            }, 1000);
+
+        } catch (error) {
+            console.error('Error:', error);
+            mostrarMensajeServicios(`Error: ${error.message}`, 'error');
+        }
+    }
+
+    // Recopilar datos de todos los servicios
+    function recopilarServicios() {
+        const servicios = [];
+        
+        // Servicios existentes
+        document.querySelectorAll('input.servicio-nombre').forEach(input => {
+            const id = input.getAttribute('data-id');
+            const nombre = input.value;
+            const categoria = document.querySelector(`input.servicio-categoria[data-id="${id}"]`).value;
+            const precio = parseFloat(document.querySelector(`input.servicio-precio[data-id="${id}"]`).value) || 0;
+            const activo = document.querySelector(`input.servicio-activo[data-id="${id}"]`).checked;
+
+            if (nombre.trim() && categoria.trim()) {
+                servicios.push({
+                    id: id !== 'nuevo' ? parseInt(id) : null,
+                    nombre_servicio: nombre.trim(),
+                    categoria: categoria.trim(),
+                    precio: precio,
+                    activo: activo
+                });
+            }
+        });
+
+        return servicios;
+    }
+
+    // Eliminar servicio individual
+    async function eliminarServicio(servicioId) {
+        if (servicioId === 'nuevo') {
+            // Solo eliminar del DOM si es nuevo
+            event.target.closest('.bg-[#0a0a0a]').remove();
+            return;
+        }
+
+        if (!confirm('¿Estás seguro de que deseas eliminar este servicio?')) {
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('jwtToken');
+            const response = await fetch(`http://localhost:5000/api/servicios/${servicioId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.mensaje || 'Error al eliminar servicio');
+            }
+
+            mostrarMensajeServicios('Servicio eliminado correctamente', 'success');
+            
+            // Recargar servicios
+            cargarServicios();
+
+        } catch (error) {
+            console.error('Error:', error);
+            mostrarMensajeServicios(`Error: ${error.message}`, 'error');
+        }
+    }
+
+    // Mostrar mensajes
+    function mostrarMensajeServicios(texto, tipo) {
+        const div = document.getElementById('servicios-message');
+        div.textContent = texto;
+        div.className = `mb-4 p-4 text-sm ${
+            tipo === 'error' ? 'bg-red-900 text-red-200' :
+            tipo === 'success' ? 'bg-green-900 text-green-200' :
+            'bg-blue-900 text-blue-200'
+        }`;
+        div.classList.remove('hidden');
+
+        setTimeout(() => {
+            div.classList.add('hidden');
+        }, 4000);
+    }
+</script>

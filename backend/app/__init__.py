@@ -19,9 +19,11 @@ def create_app():
     # Registrar blueprints
     from app.auth.routes import auth_bp
     from app.business.routes import business_bp
+    from app.services.routes import servicios_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(business_bp)
+    app.register_blueprint(servicios_bp)
     
     # Crear tablas
     with app.app_context():

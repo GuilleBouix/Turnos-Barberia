@@ -46,14 +46,14 @@ const servicios = ['Corte', 'Corte y Barba', 'Afeitado', 'Tinte', 'Peinado'];
                         <!-- Navegación de semana -->
                         <div class="flex justify-between items-center mb-6 bg-[#1a1a1a] p-3 border border-[#3d3d3d]
                         flex-col sm:flex-row gap-3 sm:gap-0">
-                            <button class="flex items-center text-white hover:bg-white hover:text-black transition-colors duration-200 border border-white px-3 py-2 cursor-pointer
+                            <button class="flex items-center text-white hover:border-white active:bg-white active:text-black transition-colors duration-200 border border-[#3d3d3d] px-3 py-2 cursor-pointer
                             w-full sm:w-auto justify-center text-sm sm:text-base">
                                 <i class='bx bxs-chevrons-left text-lg'></i>
                             </button>
 
                             <span class="text-white font-medium text-center text-sm sm:text-base">24 - 30 Nov 2025</span>
                             
-                            <button class="flex items-center text-white hover:bg-white hover:text-black transition-colors duration-200 border border-white px-3 py-2 cursor-pointer
+                            <button class="flex items-center text-white hover:border-white active:bg-white active:text-black transition-colors duration-200 border border-[#3d3d3d] px-3 py-2 cursor-pointer
                             w-full sm:w-auto justify-center text-sm sm:text-base">
                                 <i class='bx bxs-chevrons-right text-lg'></i>
                             </button>
@@ -85,7 +85,7 @@ const servicios = ['Corte', 'Corte y Barba', 'Afeitado', 'Tinte', 'Peinado'];
                             </div>
                             
                             <p class="text-[#5a5a5a] text-xs sm:text-sm mt-2">
-                                (Sábado 29 y Domingo 30 no disponibles).
+                                (Sábado 29 y Domingo 30 cerrado).
                             </p>
                         </div>
                         
@@ -134,25 +134,25 @@ const servicios = ['Corte', 'Corte y Barba', 'Afeitado', 'Tinte', 'Peinado'];
                         <form class="space-y-4">
                             <div>
                                 <label class="block text-[#8f8f8f] mb-2 text-sm sm:text-base">Nombre:</label>
-                                <input type="text" class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-sm sm:text-base" placeholder="Ingresa tu nombre" />
+                                <input type="text" class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-sm sm:text-base duration-200" placeholder="Ingresa tu nombre" />
                             </div>
                             
                             <div>
-                                <label class="block text-[#8f8f8f] mb-2 text-sm sm:text-base">Teléfono:</label>
-                                <input type="tel" class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-sm sm:text-base" placeholder="Ingresa tu teléfono" />
+                                <label class="block text-[#8f8f8f] mb-2 text-sm sm:text-base">Número de Teléfono:</label>
+                                <input type="tel" class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-sm sm:text-base duration-200" placeholder="Ingresa tu teléfono" />
                             </div>
                             
                             <div>
                                 <label class="block text-[#8f8f8f] mb-2 text-sm sm:text-base">Servicio:</label>
-                                <select class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-sm sm:text-base">
+                                <select class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-sm sm:text-base duration-200">
                                     {servicios.map((servicio) => (
                                         <option class="text-sm sm:text-base">{servicio}</option>
                                     ))}
                                 </select>
                             </div>
                             
-                            <button type="submit" class="w-full bg-white text-black px-4 py-3 font-light text-sm sm:text-base cursor-pointer
-                              hover:bg-gray-200 transition-colors duration-200 border border-white">
+                            <button type="submit" class="w-full bg-white text-black px-4 py-3 text-sm sm:text-base cursor-pointer
+                            hover:bg-gray-200 transition-colors duration-200 border border-white">
                                 Confirmar Reserva
                             </button>
                         </form>
