@@ -2,60 +2,62 @@
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
-
-// Datos de ejemplo para la demo
-const diasSemana = [
-  { fecha: 'Lunes 24', disponible: true, seleccionado: false },
-  { fecha: 'Martes 25', disponible: true, seleccionado: true },
-  { fecha: 'Miércoles 26', disponible: true, seleccionado: false },
-  { fecha: 'Jueves 27', disponible: true, seleccionado: false },
-  { fecha: 'Viernes 28', disponible: true, seleccionado: false },
-  { fecha: 'Sábado 29', disponible: false, seleccionado: false },
-  { fecha: 'Domingo 30', disponible: false, seleccionado: false }
-];
-
-const horarios = [
-  { hora: '09:00', disponible: true, estado: 'disponible' },
-  { hora: '09:30', disponible: true, estado: 'disponible' },
-  { hora: '10:00', disponible: false, estado: 'reservado' },
-  { hora: '10:30', disponible: true, estado: 'disponible' },
-  { hora: '11:00', disponible: true, estado: 'disponible' },
-  { hora: '11:30', disponible: false, estado: 'cerrado' }
-];
-
-const servicios = ['Corte', 'Corte y Barba', 'Afeitado', 'Tinte', 'Peinado'];
 ---
 
-<Layout>
+<Layout title="Reservar Turno">
 	<Navbar />
-        <section class="min-h-screen flex flex-col items-center justify-center py-12 px-4
-        sm:px-6 lg:px-8">
-            <div class="w-full max-w-3xl mx-auto">
-                <!-- Contenedor principal del formulario -->
-                <div class="bg-[#101010] border border-[#3d3d3d] text-[#8f8f8f] p-4
-                sm:p-6 lg:p-8">
-                    
-                    <h1 class="text-2xl font-bold font-playfair mb-8 text-white
-                    md:text-3xl">RESERVAR UN TURNO</h1>
+    <section class="min-h-screen flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="w-full max-w-3xl mx-auto">
+            <!-- Contenedor principal -->
+            <div class="bg-[#101010] border border-[#3d3d3d] text-[#8f8f8f] p-4 sm:p-6 lg:p-8">
+                
+                <h1 class="text-2xl font-bold font-playfair mb-8 text-white md:text-3xl">RESERVAR UN TURNO</h1>
 
-                    <!-- Sección 1: Elegir fecha -->
-                    <div class="mb-8 text-left">
-                        <h2 class="text-lg font-semibold text-white mb-4
-                        sm:text-xl">1) Elegí una fecha:</h2>
+                <!-- Div para mensajes de error/éxito -->
+                <div id="messageDiv" class="hidden mb-6 p-4 rounded text-sm"></div>
+
+                <!-- Div de carga -->
+                <div id="loadingDiv" class="text-center text-[#8f8f8f] mb-6">
+                    Cargando información...
+                </div>
+
+                <!-- Contenedor del formulario (oculto mientras carga) -->
+                <div id="formContainer" class="hidden space-y-6">
+                    
+                    <!-- SECCIÓN 1: Turno Existente -->
+                    <div id="turnoExistente" class="hidden bg-green-900 border border-green-700 p-6 rounded">
+                        <h3 class="text-xl font-bold text-green-200 mb-4"><i class='bx bx-check'></i> Ya tienes un turno reservado</h3>
+                        <div class="space-y-3 text-green-100">
+                            <p><span class="font-semibold">Fecha:</span> <span id="turnoFecha"></span></p>
+                            <p><span class="font-semibold">Hora:</span> <span id="turnoHora"></span></p>
+                            <p><span class="font-semibold">Servicio:</span> <span id="turnoServicio"></span></p>
+                            <p><span class="font-semibold">Cliente:</span> <span id="turnoCliente"></span></p>
+                            <div class="mt-4 p-3 bg-[#0a0a0a] rounded border border-green-700">
+                                <p class="text-sm text-[#8f8f8f] mb-2">Link para cancelar:</p>
+                                <a id="linkCancelar" href="#" target="_blank" class="text-blue-400 break-all hover:underline text-md">
+                                    (Se generará)
+                                </a>
+                            </div>
+                            <button id="btnCancelarTurno" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded mt-4 transition">
+                                Cancelar Turno
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN 2: Elegir Fecha -->
+                    <div id="seccionFecha" class="hidden">
+                        <h2 class="text-lg font-semibold text-white mb-4 sm:text-xl">1) Elegí una fecha:</h2>
                         
                         <!-- Navegación de semana -->
-                        <div class="flex justify-between items-center mb-6 bg-[#1a1a1a] p-3 border border-[#3d3d3d]
-                        flex-col sm:flex-row gap-3 sm:gap-0">
-                            <button class="flex items-center text-white hover:border-white active:bg-white active:text-black transition-colors duration-200 border border-[#3d3d3d] px-3 py-2 cursor-pointer
-                            w-full sm:w-auto justify-center text-sm sm:text-base">
-                                <i class='bx bxs-chevrons-left text-lg'></i>
+                        <div class="flex justify-between items-center mb-6 bg-[#1a1a1a] p-3 border border-[#3d3d3d] flex-col sm:flex-row gap-3 sm:gap-0">
+                            <button id="btnAnterior" class="flex items-center text-white hover:border-white active:bg-white active:text-black transition-colors duration-200 border border-[#3d3d3d] px-3 py-2 cursor-pointer w-full sm:w-auto justify-center text-sm sm:text-base">
+                                <i class='bx bx-chevrons-left'></i>
                             </button>
 
-                            <span class="text-white font-medium text-center text-sm sm:text-base">24 - 30 Nov 2025</span>
+                            <span id="rangoSemana" class="text-white font-medium text-center text-sm sm:text-base">Cargando...</span>
                             
-                            <button class="flex items-center text-white hover:border-white active:bg-white active:text-black transition-colors duration-200 border border-[#3d3d3d] px-3 py-2 cursor-pointer
-                            w-full sm:w-auto justify-center text-sm sm:text-base">
-                                <i class='bx bxs-chevrons-right text-lg'></i>
+                            <button id="btnSiguiente" class="flex items-center text-white hover:border-white active:bg-white active:text-black transition-colors duration-200 border border-[#3d3d3d] px-3 py-2 cursor-pointer w-full sm:w-auto justify-center text-sm sm:text-base">
+                                <i class='bx bx-chevrons-right'></i>
                             </button>
                         </div>
                         
@@ -65,111 +67,499 @@ const servicios = ['Corte', 'Corte y Barba', 'Afeitado', 'Tinte', 'Peinado'];
                                 Días disponibles:
                             </h3>
                             
-                            <div class="grid grid-cols-2 gap-2
-                            sm:grid-cols-3 sm:gap-3
-                            md:grid-cols-4">
-                                {diasSemana.map((dia) => (
-                                    <button 
-                                        class={`py-2 px-2 text-center transition-all duration-200 cursor-pointer border text-xs sm:text-sm
-                                        ${dia.disponible 
-                                            ? dia.seleccionado 
-                                                ? 'bg-white text-black border-white' 
-                                                : 'bg-[#101010] border-[#3d3d3d] text-white hover:bg-white hover:border-white hover:text-black' 
-                                            : 'bg-[#1a1a1a] border-[#3d3d3d] text-[#5a5a5a] cursor-not-allowed'
-                                        }`}
-                                        disabled={!dia.disponible}
-                                    >
-                                        {dia.fecha}
-                                    </button>
-                                ))}
+                            <div id="diasContainer" class="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 md:grid-cols-4">
+                                <!-- Se llena dinámicamente -->
                             </div>
                             
-                            <p class="text-[#5a5a5a] text-xs sm:text-sm mt-2">
-                                (Sábado 29 y Domingo 30 cerrado).
+                            <p class="text-[#5a5a5a] mt-2 text-md sm:text-sm">
+                                Cargando días disponibles...
                             </p>
                         </div>
                         
                         <!-- Día seleccionado -->
                         <div class="bg-[#1a1a1a] p-3 border border-[#3d3d3d] text-sm sm:text-base">
                             <span class="text-[#8f8f8f]">Día seleccionado: </span>
-                            <span class="text-white font-medium">Martes 25</span>
+                            <span id="diaSeleccionadoText" class="text-white font-medium">Ninguno</span>
                         </div>
                     </div>
                     
-                    <!-- Sección 2: Horarios disponibles -->
-                    <div class="mb-8 text-left">
-                        <h2 class="text-lg font-semibold text-white mb-4
-                        sm:text-xl">2) Horarios disponibles para Martes 25:</h2>
+                    <!-- SECCIÓN 3: Horarios disponibles -->
+                    <div id="seccionHorarios" class="hidden">
+                        <h2 class="text-lg font-semibold text-white mb-4 sm:text-xl">2) Horarios disponibles para <span id="fechaSeleccionadaText">la fecha seleccionada</span>:</h2>
                         
                         <div class="bg-[#1a1a1a] border border-[#3d3d3d] overflow-hidden">
                             <div class="bg-[#101010] p-3 text-center border-b border-[#3d3d3d]">
                                 <h3 class="text-white font-medium text-sm sm:text-base">Horarios disponibles</h3>
                             </div>
-                            <div class="p-3 sm:p-4">
-                                {horarios.map((horario) => (
-                                    <div class="flex justify-between items-center py-2 border-b border-[#3d3d3d] last:border-b-0
-                                    flex-col sm:flex-row gap-2 sm:gap-0">
-                                        <span class="text-white text-sm sm:text-base">{horario.hora}</span>
-                                        {horario.estado === 'disponible' ? (
-                                            <button class="text-white hover:bg-white hover:text-black transition-colors duration-200 border border-white px-3 py-1 cursor-pointer
-                                            w-full sm:w-auto text-xs sm:text-sm">
-                                                Reservar
-                                            </button>
-                                        ) : horario.estado === 'reservado' ? (
-                                            <span class="text-[#8f8f8f] px-3 py-1 text-xs sm:text-sm text-center w-full sm:w-auto">— Reservado —</span>
-                                        ) : (
-                                            <span class="text-[#5a5a5a] px-3 py-1 text-xs sm:text-sm text-center w-full sm:w-auto">— Cerrado —</span>
-                                        )}
-                                    </div>
-                                ))}
+                            <div id="horariosContainer" class="p-3 sm:p-4 space-y-2">
+                                <!-- Se llena dinámicamente -->
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Sección 3: Datos del cliente -->
-                    <div class="mb-6 text-left">
-                        <h2 class="text-lg font-semibold text-white mb-4
-                        sm:text-xl">3) Datos del cliente:</h2>
+                    <!-- SECCIÓN 4: Datos del cliente -->
+                    <div id="seccionFormulario" class="hidden">
+                        <h2 class="text-lg font-semibold text-white mb-4 sm:text-xl">3) Confirmá tus datos:</h2>
                         
-                        <form class="space-y-4">
+                        <form id="formReserva" class="space-y-4">
                             <div>
                                 <label class="block text-[#8f8f8f] mb-2 text-sm sm:text-base">Nombre:</label>
-                                <input type="text" class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-sm sm:text-base duration-200" placeholder="Ingresa tu nombre" />
+                                <input 
+                                    type="text" 
+                                    id="inputNombre" 
+                                    required
+                                    class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-sm sm:text-base duration-200 rounded"
+                                    placeholder="Ingresa tu nombre"
+                                />
                             </div>
                             
                             <div>
-                                <label class="block text-[#8f8f8f] mb-2 text-sm sm:text-base">Número de Teléfono:</label>
-                                <input type="tel" class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-sm sm:text-base duration-200" placeholder="Ingresa tu teléfono" />
+                                <label class="block text-[#8f8f8f] mb-2 text-sm sm:text-base">Teléfono:</label>
+                                <input 
+                                    type="tel" 
+                                    id="inputTelefono" 
+                                    required
+                                    class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-sm sm:text-base duration-200 rounded"
+                                    placeholder="Ingresa tu teléfono"
+                                />
                             </div>
                             
                             <div>
                                 <label class="block text-[#8f8f8f] mb-2 text-sm sm:text-base">Servicio:</label>
-                                <select class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-sm sm:text-base duration-200">
-                                    {servicios.map((servicio) => (
-                                        <option class="text-sm sm:text-base">{servicio}</option>
-                                    ))}
+                                <select 
+                                    id="selectServicio" 
+                                    required
+                                    class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-sm sm:text-base duration-200 rounded"
+                                >
+                                    <option value="">Selecciona un servicio</option>
                                 </select>
                             </div>
                             
-                            <button type="submit" class="w-full bg-white text-black px-4 py-3 text-sm sm:text-base cursor-pointer
-                            hover:bg-gray-200 transition-colors duration-200 border border-white">
+                            <button 
+                                type="submit" 
+                                id="btnConfirmar"
+                                class="w-full bg-white text-black px-4 py-3 text-sm sm:text-base cursor-pointer hover:bg-gray-200 transition-colors duration-200 border border-white rounded font-semibold"
+                            >
                                 Confirmar Reserva
                             </button>
                         </form>
                     </div>
                     
-                    <!-- Mensaje de confirmación -->
-                    <div class="bg-[#1a1a1a] border border-[#3d3d3d] p-3 sm:p-4">
-                        <p class="text-white text-left text-sm sm:text-base">
-                            <span class="font-semibold">¡Listo!</span> Tu turno quedó reservado para el Martes 25 a las 09:30.
-                            <br class="hidden sm:block" />
-                            <span class="text-[#8f8f8f] text-xs sm:text-sm">Abre este enlace para cancelar tu turno:</span>
-                            <br />
-                            <a href="#" target="_blank" class="text-blue-500 underline text-xs sm:text-sm">www.beardcut-barberia.com/cancelar/t654vggHJ5Tg55t4d4GH4D</a>
-                        </p>
+                    <!-- SECCIÓN 5: Confirmación -->
+                    <div id="seccionConfirmacion" class="hidden bg-green-900 border border-green-700 p-6 rounded">
+                        <h3 class="text-xl font-bold text-green-200 mb-4"><i class='bx bx-check'></i> ¡Turno Reservado!</h3>
+                        <div class="space-y-3 text-green-100 mb-4">
+                            <p><span class="font-semibold">Fecha:</span> <span id="confirmFecha"></span></p>
+                            <p><span class="font-semibold">Hora:</span> <span id="confirmHora"></span></p>
+                            <p><span class="font-semibold">Servicio:</span> <span id="confirmServicio"></span></p>
+                        </div>
+                        
+                        <div class="bg-[#0a0a0a] p-4 rounded border border-green-700 mb-4">
+                            <p class="text-sm text-[#8f8f8f] mb-2">Link para cancelar (guarda este enlace):</p>
+                            <a id="linkCancelacionFinal" href="#" target="_blank" class="text-blue-400 break-all hover:underline text-md">
+                                (Se generará)
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 	<Footer />
 </Layout>
+
+<script type="module">
+    // Variables globales
+    let clientId = null;
+    let fechaSeleccionada = null;
+    let horaSeleccionada = null;
+    let servicioSeleccionado = null;
+    let semanaActual = 0; // 0 = esta semana, 1 = próxima, -1 = anterior
+
+    // Ejecutar al cargar la página
+    document.addEventListener('DOMContentLoaded', async () => {
+        await inicializar();
+    });
+
+    // Función principal de inicialización
+    async function inicializar() {
+        try {
+            // 1. Obtener o generar client_id
+            await obtenerClientId();
+            
+            // 2. Verificar si ya tiene turno activo
+            await verificarTurnoActivo();
+            
+            // 3. Cargar servicios
+            await cargarServicios();
+            
+            // 4. Renderizar días de esta semana
+            await renderizarSemana();
+            
+            // Ocultar carga, mostrar formulario
+            document.getElementById('loadingDiv').classList.add('hidden');
+            document.getElementById('formContainer').classList.remove('hidden');
+            
+            // Listeners de botones
+            document.getElementById('btnAnterior').addEventListener('click', () => cambiarSemana(-1));
+            document.getElementById('btnSiguiente').addEventListener('click', () => cambiarSemana(1));
+            document.getElementById('formReserva').addEventListener('submit', (e) => enviarReserva(e));
+            document.getElementById('btnCancelarTurno').addEventListener('click', cancelarTurnoExistente);
+            document.getElementById('btnVolverAlInicio').addEventListener('click', reiniciarFormulario);
+        } catch (error) {
+            console.error('Error:', error);
+            mostrarMensaje('Error al cargar. Intentá recargar la página.', 'error');
+        }
+    }
+
+    // Obtener o generar client_id
+    async function obtenerClientId() {
+        try {
+            // Primero verificamos si ya existe en localStorage
+            let guardado = localStorage.getItem('client_id');
+            if (guardado) {
+                clientId = guardado;
+                console.log('client_id obtenido de localStorage:', clientId);
+                return;
+            }
+            
+            // Si no existe, lo generamos
+            const response = await fetch('http://localhost:5000/api/appointments/client-id');
+            const data = await response.json();
+            clientId = data.client_id;
+            
+            // Lo guardamos en localStorage para futuras visitas
+            localStorage.setItem('client_id', clientId);
+            console.log('client_id generado y guardado:', clientId);
+        } catch (error) {
+            console.error('Error obteniendo client_id:', error);
+            throw error;
+        }
+    }
+
+    // Verificar si el cliente ya tiene turno activo
+    async function verificarTurnoActivo() {
+        try {
+            const response = await fetch(`http://localhost:5000/api/appointments/turno-actual?client_id=${clientId}`);
+            const data = await response.json();
+            
+            console.log('Respuesta turno-actual:', data);
+            
+            // Si hay turno y está en estado 'reservado', mostrar turno existente
+            if (data.success && data.turno && data.turno.estado === 'reservado') {
+                console.log('Turno activo encontrado:', data.turno);
+                mostrarTurnoExistente(data.turno);
+                return;
+            }
+            
+            console.log('Sin turno activo, mostrando formulario');
+            // Si no hay turno, mostrar formulario
+            document.getElementById('seccionFecha').classList.remove('hidden');
+            document.getElementById('seccionHorarios').classList.remove('hidden');
+            document.getElementById('seccionFormulario').classList.remove('hidden');
+        } catch (error) {
+            console.error('Error verificando turno:', error);
+        }
+    }
+
+    // Mostrar turno existente
+    function mostrarTurnoExistente(turno) {
+        document.getElementById('turnoExistente').classList.remove('hidden');
+        document.getElementById('seccionFecha').classList.add('hidden');
+        document.getElementById('seccionHorarios').classList.add('hidden');
+        document.getElementById('seccionFormulario').classList.add('hidden');
+        
+        document.getElementById('turnoFecha').textContent = new Date(turno.fecha).toLocaleDateString('es-AR');
+        document.getElementById('turnoHora').textContent = turno.hora.substring(0, 5);
+        document.getElementById('turnoServicio').textContent = `Servicio #${turno.servicio_id}`;
+        document.getElementById('turnoCliente').textContent = turno.nombre_cliente;
+        
+        const linkCancelar = `${window.location.origin}/cancelar/${turno.token_cancelacion}`;
+        document.getElementById('linkCancelar').href = linkCancelar;
+        document.getElementById('linkCancelar').textContent = linkCancelar;
+    }
+
+    // Cargar servicios del backend
+    async function cargarServicios() {
+        try {
+            // Aquí irías al endpoint de servicios si lo tienes
+            // Por ahora usamos servicios de ejemplo
+            const servicios = [
+                { id: 1, nombre: 'Corte' },
+                { id: 2, nombre: 'Corte y Barba' },
+                { id: 3, nombre: 'Afeitado' },
+                { id: 4, nombre: 'Tinte' },
+            ];
+            
+            const select = document.getElementById('selectServicio');
+            servicios.forEach(servicio => {
+                const option = document.createElement('option');
+                option.value = servicio.id;
+                option.textContent = servicio.nombre;
+                select.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error cargando servicios:', error);
+        }
+    }
+
+    // Renderizar semana de días
+    async function renderizarSemana() {
+        try {
+            const hoy = new Date();
+            const primerDia = new Date(hoy);
+            primerDia.setDate(hoy.getDate() - hoy.getDay() + semanaActual * 7);
+            
+            const dias = [];
+            for (let i = 0; i < 7; i++) {
+                const fecha = new Date(primerDia);
+                fecha.setDate(primerDia.getDate() + i);
+                
+                // No mostrar domingos (índice 0) ni sábados (índice 6) si están cerrados
+                if (fecha.getDay() !== 0 && fecha.getDay() !== 6) {
+                    dias.push(fecha);
+                }
+            }
+            
+            // Actualizar rango de semana
+            const inicio = dias[0].toLocaleDateString('es-AR', { day: '2-digit', month: 'short' });
+            const fin = dias[dias.length - 1].toLocaleDateString('es-AR', { day: '2-digit', month: 'short' });
+            document.getElementById('rangoSemana').textContent = `${inicio} - ${fin}`;
+            
+            // Renderizar botones de días
+            const container = document.getElementById('diasContainer');
+            container.innerHTML = '';
+            
+            for (const fecha of dias) {
+                const btn = document.createElement('button');
+                const fechaStr = fecha.toISOString().split('T')[0];
+                const nombreDia = fecha.toLocaleDateString('es-AR', { weekday: 'short', day: '2-digit' });
+                
+                btn.type = 'button';
+                btn.textContent = nombreDia;
+                btn.className = `py-2 px-2 text-center transition-all duration-200 cursor-pointer border rounded text-sm sm:text-base ${
+                    fechaSeleccionada === fechaStr
+                        ? 'bg-white text-black border-white'
+                        : 'bg-[#101010] border-[#3d3d3d] text-white hover:bg-white hover:text-black hover:border-white'
+                }`;
+                
+                btn.addEventListener('click', () => seleccionarFecha(fechaStr, nombreDia));
+                container.appendChild(btn);
+            }
+        } catch (error) {
+            console.error('Error renderizando semana:', error);
+        }
+    }
+
+    // Cambiar semana (anterior/siguiente)
+    async function cambiarSemana(direccion) {
+        semanaActual += direccion;
+        await renderizarSemana();
+    }
+
+    // Seleccionar fecha y cargar horarios
+    async function seleccionarFecha(fecha, nombreDia) {
+        fechaSeleccionada = fecha;
+        document.getElementById('diaSeleccionadoText').textContent = nombreDia;
+        document.getElementById('fechaSeleccionadaText').textContent = nombreDia;
+        
+        try {
+            // Cargar horarios disponibles
+            const response = await fetch(`http://localhost:5000/api/appointments/horarios-disponibles?fecha=${fecha}`);
+            const data = await response.json();
+            
+            if (!data.success) {
+                mostrarMensaje('Error cargando horarios', 'error');
+                return;
+            }
+            
+            renderizarHorarios(data.horarios);
+        } catch (error) {
+            console.error('Error:', error);
+            mostrarMensaje('Error cargando horarios', 'error');
+        }
+        
+        // Re-renderizar días para actualizar selección
+        await renderizarSemana();
+    }
+
+    // Renderizar horarios disponibles
+    function renderizarHorarios(horarios) {
+        const container = document.getElementById('horariosContainer');
+        container.innerHTML = '';
+        
+        horarios.forEach(horario => {
+            const div = document.createElement('div');
+            div.className = 'flex justify-between items-center py-2 border-b border-[#3d3d3d] last:border-b-0 flex-col sm:flex-row gap-2 sm:gap-0';
+            
+            if (horario.disponible) {
+                div.innerHTML = `
+                    <span class="text-white text-sm sm:text-base">${horario.hora}</span>
+                    <button 
+                        class="text-white hover:bg-white hover:text-black transition-colors duration-200 border border-white px-3 py-1 cursor-pointer w-full sm:w-auto text-sm"
+                        onclick="seleccionarHora('${horario.hora}')"
+                    >
+                        Reservar
+                    </button>
+                `;
+            } else {
+                div.innerHTML = `
+                    <span class="text-white text-sm sm:text-base">${horario.hora}</span>
+                    <span class="text-[#8f8f8f] px-3 py-1 text-sm text-center w-full sm:w-auto">— Reservado —</span>
+                `;
+            }
+            
+            container.appendChild(div);
+        });
+    }
+
+    // Seleccionar hora
+    function seleccionarHora(hora) {
+        horaSeleccionada = hora;
+        document.getElementById('inputNombre').focus();
+        mostrarMensaje(`<i class='bx bx-check'></i> Horario seleccionado: ${hora}`, 'success');
+    }
+
+    // Enviar reserva
+    async function enviarReserva(e) {
+        e.preventDefault();
+        
+        if (!fechaSeleccionada || !horaSeleccionada) {
+            mostrarMensaje('Selecciona fecha y hora', 'error');
+            return;
+        }
+        
+        const nombre = document.getElementById('inputNombre').value;
+        const telefono = document.getElementById('inputTelefono').value;
+        const servicioId = document.getElementById('selectServicio').value;
+        
+        if (!nombre || !telefono || !servicioId) {
+            mostrarMensaje('Completa todos los datos', 'error');
+            return;
+        }
+        
+        try {
+            const response = await fetch('http://localhost:5000/api/appointments/reservar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fecha: fechaSeleccionada,
+                    hora: horaSeleccionada,
+                    servicio_id: parseInt(servicioId),
+                    nombre_cliente: nombre,
+                    telefono_cliente: telefono,
+                    client_id: clientId
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (!data.success) {
+                mostrarMensaje(data.mensaje || 'Error al reservar', 'error');
+                return;
+            }
+            
+            // Mostrar confirmación
+            mostrarConfirmacion(data.turno);
+        } catch (error) {
+            console.error('Error:', error);
+            mostrarMensaje('Error al reservar', 'error');
+        }
+    }
+
+    // Mostrar confirmación
+    function mostrarConfirmacion(turno) {
+        // Guardar el turno en localStorage para referencia
+        localStorage.setItem('turno_actual', JSON.stringify(turno));
+        
+        document.getElementById('seccionFecha').classList.add('hidden');
+        document.getElementById('seccionHorarios').classList.add('hidden');
+        document.getElementById('seccionFormulario').classList.add('hidden');
+        document.getElementById('seccionConfirmacion').classList.remove('hidden');
+        
+        document.getElementById('confirmFecha').textContent = new Date(turno.fecha).toLocaleDateString('es-AR');
+        document.getElementById('confirmHora').textContent = turno.hora.substring(0, 5);
+        document.getElementById('confirmServicio').textContent = `Servicio #${turno.servicio_id}`;
+        
+        const linkCancelacion = `${window.location.origin}/cancelar/${turno.token_cancelacion}`;
+        document.getElementById('linkCancelacionFinal').href = linkCancelacion;
+        document.getElementById('linkCancelacionFinal').textContent = linkCancelacion;
+    }
+
+    // Cancelar turno existente
+    async function cancelarTurnoExistente() {
+        const linkElement = document.getElementById('linkCancelar');
+        const turnoActual = linkElement.href;
+        
+        if (!turnoActual || !confirm('¿Estás seguro de que querés cancelar tu turno?')) return;
+        
+        // Extraer token de la URL (última parte después del último /)
+        const token = turnoActual.split('/').pop();
+        
+        console.log('Intentando cancelar turno con token:', token);
+        
+        try {
+            const response = await fetch('http://localhost:5000/api/appointments/cancelar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token_cancelacion: token })
+            });
+            
+            const data = await response.json();
+            console.log('Respuesta cancelación:', data);
+            
+            if (!data.success) {
+                mostrarMensaje('Error al cancelar: ' + data.mensaje, 'error');
+                return;
+            }
+            
+            mostrarMensaje("<i class='bx bx-check'></i> Turno cancelado correctamente", 'success');
+            
+            // Esperar 2 segundos y verificar turno de nuevo
+            setTimeout(async () => {
+                console.log('Verificando turno después de cancelación...');
+                await verificarTurnoActivo();
+            }, 2000);
+        } catch (error) {
+            console.error('Error:', error);
+            mostrarMensaje('Error al cancelar el turno', 'error');
+        }
+    }
+
+    // Reiniciar formulario
+    function reiniciarFormulario() {
+        fechaSeleccionada = null;
+        horaSeleccionada = null;
+        semanaActual = 0;
+        
+        // Limpiar localStorage del turno actual
+        localStorage.removeItem('turno_actual');
+        
+        document.getElementById('seccionConfirmacion').classList.add('hidden');
+        document.getElementById('seccionFecha').classList.remove('hidden');
+        document.getElementById('seccionHorarios').classList.remove('hidden');
+        document.getElementById('seccionFormulario').classList.remove('hidden');
+        
+        document.getElementById('formReserva').reset();
+        renderizarSemana();
+    }
+
+    // Mostrar mensajes
+    function mostrarMensaje(texto, tipo) {
+        const div = document.getElementById('messageDiv');
+        div.textContent = texto;
+        div.className = `mb-6 p-4 rounded text-sm ${
+            tipo === 'error' ? 'bg-red-900 text-red-200' :
+            tipo === 'success' ? 'bg-green-900 text-green-200' :
+            'bg-blue-900 text-blue-200'
+        }`;
+        div.classList.remove('hidden');
+        
+        setTimeout(() => {
+            div.classList.add('hidden');
+        }, 3000);
+    }
+
+    // Exponer función global para botones
+    window.seleccionarHora = seleccionarHora;
+</script>
