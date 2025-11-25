@@ -14,7 +14,12 @@ def create_app():
     jwt.init_app(app)
     
     # Configurar CORS para permitir el frontend en puerto diferente
-    CORS(app, origins=["http://localhost:4321", "http://127.0.0.1:4321"])
+    CORS(app, 
+         origins=["http://localhost:4321", "http://127.0.0.1:4321"],
+         allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+         expose_headers=["Content-Type", "Authorization"],
+         supports_credentials=True)
     
     # Registrar blueprints
     from app.auth.routes import auth_bp

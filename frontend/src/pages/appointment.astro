@@ -7,14 +7,11 @@ import Footer from '../components/Footer.astro';
 <Layout title="Reservar Turno">
 	<Navbar />
     <section class="min-h-screen flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div class="w-full max-w-3xl mx-auto">
+        <div class="w-full max-w-2xl mx-auto px-12">
             <!-- Contenedor principal -->
             <div class="bg-[#101010] border border-[#3d3d3d] text-[#8f8f8f] p-4 sm:p-6 lg:p-8">
-                
-                <h1 class="text-2xl font-bold font-playfair mb-8 text-white md:text-3xl">RESERVAR UN TURNO</h1>
-
                 <!-- Div para mensajes de error/éxito -->
-                <div id="messageDiv" class="hidden mb-6 p-4 rounded text-sm"></div>
+                <div id="messageDiv" class="hidden mb-6 p-4 text-md"></div>
 
                 <!-- Div de carga -->
                 <div id="loadingDiv" class="text-center text-[#8f8f8f] mb-6">
@@ -25,23 +22,52 @@ import Footer from '../components/Footer.astro';
                 <div id="formContainer" class="hidden space-y-6">
                     
                     <!-- SECCIÓN 1: Turno Existente -->
-                    <div id="turnoExistente" class="hidden bg-green-900 border border-green-700 p-6 rounded">
-                        <h3 class="text-xl font-bold text-green-200 mb-4"><i class='bx bx-check'></i> Ya tienes un turno reservado</h3>
-                        <div class="space-y-3 text-green-100">
-                            <p><span class="font-semibold">Fecha:</span> <span id="turnoFecha"></span></p>
-                            <p><span class="font-semibold">Hora:</span> <span id="turnoHora"></span></p>
-                            <p><span class="font-semibold">Servicio:</span> <span id="turnoServicio"></span></p>
-                            <p><span class="font-semibold">Cliente:</span> <span id="turnoCliente"></span></p>
-                            <div class="mt-4 p-3 bg-[#0a0a0a] rounded border border-green-700">
-                                <p class="text-sm text-[#8f8f8f] mb-2">Link para cancelar:</p>
-                                <a id="linkCancelar" href="#" target="_blank" class="text-blue-400 break-all hover:underline text-md">
+                    <div id="turnoExistente" class="hidden bg-[#101010] border border-[#3d3d3d] p-6">
+                        <div class="flex flex-col items-center gap-6 mb-10">
+                            <i class='bx bx-check-circle text-6xl text-green-500 bg-[#202020] rounded-[100%] p-4'></i>
+                            <h3 class="text-2xl font-bold text-white font-playfair">¡TURNO RESERVADO!</h3>
+                        </div>
+                        
+                        <div class="space-y-4 text-[#8f8f8f] mb-6">
+                            <div class="flex justify-between items-center border-b border-[#3d3d3d] pb-3">
+                                <span class="font-semibold">Fecha:</span>
+                                <span id="turnoFecha" class="text-white"></span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center border-b border-[#3d3d3d] pb-3">
+                                <span class="font-semibold">Hora:</span>
+                                <span id="turnoHora" class="text-white"></span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center border-b border-[#3d3d3d] pb-3">
+                                <span class="font-semibold">Servicio:</span>
+                                <span id="turnoServicio" class="text-white"></span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center border-b border-[#3d3d3d] pb-3">
+                                <span class="font-semibold">Cliente:</span>
+                                <span id="turnoCliente" class="text-white"></span>
+                            </div>
+                        </div>
+                        
+                        <!-- Link para cancelar -->
+                        <div class="bg-[#1a1a1a] border border-[#3d3d3d] p-4 mb-4">
+                            <p class="text-[#8f8f8f] text-md mb-2">Link para cancelar:</p>
+                            <div class="flex items-center gap-2">
+                                <a id="linkCancelar" href="#" target="_blank" class="text-blue-400 hover:underline text-md flex-1 truncate">
                                     (Se generará)
                                 </a>
+                                <button id="btnCopiarLinkExistente" class="text-[#8f8f8f] cursor-pointer transition-colors duration-200 hover:text-white">
+                                    <i class='bx bx-copy text-xl'></i>
+                                </button>
                             </div>
-                            <button id="btnCancelarTurno" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded mt-4 transition">
-                                Cancelar Turno
-                            </button>
                         </div>
+                        
+                        <p class="text-[#8f8f8f] text-md mb-4 text-center">Para cancelar, abra el link o use el siguiente botón:</p>
+                        
+                        <button id="btnCancelarTurno" class="w-full bg-white hover:opacity-90 text-black px-4 py-3 duration-200 cursor-pointer font-semibold">
+                            Cancelar Turno
+                        </button>
                     </div>
 
                     <!-- SECCIÓN 2: Elegir Fecha -->
@@ -50,20 +76,20 @@ import Footer from '../components/Footer.astro';
                         
                         <!-- Navegación de semana -->
                         <div class="flex justify-between items-center mb-6 bg-[#1a1a1a] p-3 border border-[#3d3d3d] flex-col sm:flex-row gap-3 sm:gap-0">
-                            <button id="btnAnterior" class="flex items-center text-white hover:border-white active:bg-white active:text-black transition-colors duration-200 border border-[#3d3d3d] px-3 py-2 cursor-pointer w-full sm:w-auto justify-center text-sm sm:text-base">
+                            <button id="btnAnterior" class="flex items-center text-white hover:border-white active:bg-white active:text-black transition-colors duration-200 border border-[#3d3d3d] px-3 py-2 cursor-pointer w-full sm:w-auto justify-center text-md sm:text-base">
                                 <i class='bx bx-chevrons-left'></i>
                             </button>
 
-                            <span id="rangoSemana" class="text-white font-medium text-center text-sm sm:text-base">Cargando...</span>
+                            <span id="rangoSemana" class="text-white font-medium text-center text-md sm:text-base">Cargando...</span>
                             
-                            <button id="btnSiguiente" class="flex items-center text-white hover:border-white active:bg-white active:text-black transition-colors duration-200 border border-[#3d3d3d] px-3 py-2 cursor-pointer w-full sm:w-auto justify-center text-sm sm:text-base">
+                            <button id="btnSiguiente" class="flex items-center text-white hover:border-white active:bg-white active:text-black transition-colors duration-200 border border-[#3d3d3d] px-3 py-2 cursor-pointer w-full sm:w-auto justify-center text-md sm:text-base">
                                 <i class='bx bx-chevrons-right'></i>
                             </button>
                         </div>
                         
                         <!-- Días disponibles -->
                         <div class="mb-4">
-                            <h3 class="text-[#8f8f8f] mb-3 text-sm sm:text-base">
+                            <h3 class="text-[#8f8f8f] mb-3 text-md sm:text-base">
                                 Días disponibles:
                             </h3>
                             
@@ -71,13 +97,13 @@ import Footer from '../components/Footer.astro';
                                 <!-- Se llena dinámicamente -->
                             </div>
                             
-                            <p class="text-[#5a5a5a] mt-2 text-md sm:text-sm">
+                            <p class="text-[#5a5a5a] mt-2 text-md sm:text-md">
                                 Cargando días disponibles...
                             </p>
                         </div>
                         
                         <!-- Día seleccionado -->
-                        <div class="bg-[#1a1a1a] p-3 border border-[#3d3d3d] text-sm sm:text-base">
+                        <div class="bg-[#1a1a1a] p-3 border border-[#3d3d3d] text-md sm:text-base">
                             <span class="text-[#8f8f8f]">Día seleccionado: </span>
                             <span id="diaSeleccionadoText" class="text-white font-medium">Ninguno</span>
                         </div>
@@ -89,7 +115,7 @@ import Footer from '../components/Footer.astro';
                         
                         <div class="bg-[#1a1a1a] border border-[#3d3d3d] overflow-hidden">
                             <div class="bg-[#101010] p-3 text-center border-b border-[#3d3d3d]">
-                                <h3 class="text-white font-medium text-sm sm:text-base">Horarios disponibles</h3>
+                                <h3 class="text-white font-medium text-md sm:text-base">Horarios disponibles</h3>
                             </div>
                             <div id="horariosContainer" class="p-3 sm:p-4 space-y-2">
                                 <!-- Se llena dinámicamente -->
@@ -103,33 +129,33 @@ import Footer from '../components/Footer.astro';
                         
                         <form id="formReserva" class="space-y-4">
                             <div>
-                                <label class="block text-[#8f8f8f] mb-2 text-sm sm:text-base">Nombre:</label>
+                                <label class="block text-[#8f8f8f] mb-2 text-md sm:text-base">Nombre:</label>
                                 <input 
                                     type="text" 
                                     id="inputNombre" 
                                     required
-                                    class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-sm sm:text-base duration-200 rounded"
+                                    class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-md sm:text-base duration-200 "
                                     placeholder="Ingresa tu nombre"
                                 />
                             </div>
                             
                             <div>
-                                <label class="block text-[#8f8f8f] mb-2 text-sm sm:text-base">Teléfono:</label>
+                                <label class="block text-[#8f8f8f] mb-2 text-md sm:text-base">Teléfono:</label>
                                 <input 
                                     type="tel" 
                                     id="inputTelefono" 
                                     required
-                                    class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-sm sm:text-base duration-200 rounded"
+                                    class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-md sm:text-base duration-200 "
                                     placeholder="Ingresa tu teléfono"
                                 />
                             </div>
                             
                             <div>
-                                <label class="block text-[#8f8f8f] mb-2 text-sm sm:text-base">Servicio:</label>
+                                <label class="block text-[#8f8f8f] mb-2 text-md sm:text-base">Servicio:</label>
                                 <select 
                                     id="selectServicio" 
                                     required
-                                    class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-sm sm:text-base duration-200 rounded"
+                                    class="w-full bg-[#1a1a1a] border border-[#3d3d3d] text-white p-3 focus:outline-none focus:border-white text-md sm:text-base duration-200 "
                                 >
                                     <option value="">Selecciona un servicio</option>
                                 </select>
@@ -138,7 +164,7 @@ import Footer from '../components/Footer.astro';
                             <button 
                                 type="submit" 
                                 id="btnConfirmar"
-                                class="w-full bg-white text-black px-4 py-3 text-sm sm:text-base cursor-pointer hover:bg-gray-200 transition-colors duration-200 border border-white rounded font-semibold"
+                                class="w-full bg-white text-black px-4 py-3 text-md sm:text-base cursor-pointer hover:bg-gray-200 transition-colors duration-200 border border-white  font-semibold"
                             >
                                 Confirmar Reserva
                             </button>
@@ -146,20 +172,52 @@ import Footer from '../components/Footer.astro';
                     </div>
                     
                     <!-- SECCIÓN 5: Confirmación -->
-                    <div id="seccionConfirmacion" class="hidden bg-green-900 border border-green-700 p-6 rounded">
-                        <h3 class="text-xl font-bold text-green-200 mb-4"><i class='bx bx-check'></i> ¡Turno Reservado!</h3>
-                        <div class="space-y-3 text-green-100 mb-4">
-                            <p><span class="font-semibold">Fecha:</span> <span id="confirmFecha"></span></p>
-                            <p><span class="font-semibold">Hora:</span> <span id="confirmHora"></span></p>
-                            <p><span class="font-semibold">Servicio:</span> <span id="confirmServicio"></span></p>
+                    <div id="seccionConfirmacion" class="hidden bg-[#101010] border border-[#3d3d3d] p-6">
+                        <div class="flex items-center gap-3 mb-6">
+                            <i class='bx bx-check-circle text-3xl text-green-500'></i>
+                            <h3 class="text-2xl font-bold text-white font-playfair">¡Turno Reservado!</h3>
                         </div>
                         
-                        <div class="bg-[#0a0a0a] p-4 rounded border border-green-700 mb-4">
-                            <p class="text-sm text-[#8f8f8f] mb-2">Link para cancelar (guarda este enlace):</p>
-                            <a id="linkCancelacionFinal" href="#" target="_blank" class="text-blue-400 break-all hover:underline text-md">
-                                (Se generará)
-                            </a>
+                        <div class="space-y-4 text-[#8f8f8f] mb-6">
+                            <div class="flex justify-between items-center border-b border-[#3d3d3d] pb-3">
+                                <span class="font-semibold">Fecha:</span>
+                                <span id="confirmFecha" class="text-white">25/11/2025</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center border-b border-[#3d3d3d] pb-3">
+                                <span class="font-semibold">Hora:</span>
+                                <span id="confirmHora" class="text-white">14:00</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center border-b border-[#3d3d3d] pb-3">
+                                <span class="font-semibold">Servicio:</span>
+                                <span id="confirmServicio" class="text-white">Servicio #4</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center border-b border-[#3d3d3d] pb-3">
+                                <span class="font-semibold">Cliente:</span>
+                                <span id="confirmCliente" class="text-white">Juli</span>
+                            </div>
                         </div>
+                        
+                        <!-- Link para cancelar -->
+                        <div class="bg-[#1a1a1a] border border-[#3d3d3d] p-4 mb-4">
+                            <p class="text-[#8f8f8f] text-md mb-3">Link para cancelar:</p>
+                            <div class="flex items-center gap-2">
+                                <a id="linkCancelacionFinal" href="#" target="_blank" class="text-blue-400 hover:underline text-md flex-1 truncate">
+                                    (Se generará)
+                                </a>
+                                <button id="btnCopiarLink" class="bg-[#3d3d3d] hover:bg-[#5a5a5a] text-white px-3 py-1 text-md border border-[#5a5a5a] cursor-pointer transition-colors duration-200">
+                                    Copiar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <p class="text-[#8f8f8f] text-md mb-4 text-center">Para cancelar, use el link o el siguiente botón:</p>
+                        
+                        <button id="btnCancelarDesdeConfirmacion" class="w-full bg-white hover:opacity-90 text-black px-4 py-3 duration-200 cursor-pointer font-semibold">
+                            Cancelar Turno
+                        </button>
                     </div>
                 </div>
             </div>
@@ -205,10 +263,98 @@ import Footer from '../components/Footer.astro';
             document.getElementById('btnSiguiente').addEventListener('click', () => cambiarSemana(1));
             document.getElementById('formReserva').addEventListener('submit', (e) => enviarReserva(e));
             document.getElementById('btnCancelarTurno').addEventListener('click', cancelarTurnoExistente);
-            document.getElementById('btnVolverAlInicio').addEventListener('click', reiniciarFormulario);
+            
+            // Configurar botones de copiar
+            configurarBotonesCopiar();
         } catch (error) {
             console.error('Error:', error);
             mostrarMensaje('Error al cargar. Intentá recargar la página.', 'error');
+        }
+    }
+
+    // Función para acortar URL
+    function acortarUrl(url) {
+        if (url.length > 50) {
+            return url.substring(0, 30) + '...' + url.substring(url.length - 10);
+        }
+        return url;
+    }
+
+    // Función para copiar al portapapeles
+    async function copiarAlPortapapeles(texto, boton) {
+        try {
+            await navigator.clipboard.writeText(texto);
+            
+            // Cambiar temporalmente el texto del botón para feedback
+            const textoOriginal = boton.textContent;
+            boton.textContent = '¡Copiado!';
+            
+            setTimeout(() => {
+                boton.textContent = textoOriginal;
+            }, 2000);
+            
+        } catch (err) {
+            console.error('Error al copiar con clipboard API:', err);
+            
+            // Fallback para navegadores antiguos
+            try {
+                const textArea = document.createElement('textarea');
+                textArea.value = texto;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                if (successful) {
+                    // Feedback visual también para el fallback
+                    const textoOriginal = boton.textContent;
+                    boton.textContent = '¡Copiado!';
+                    
+                    setTimeout(() => {
+                        boton.textContent = textoOriginal;
+                    }, 2000);
+                } else {
+                    throw new Error('Fallback copy failed');
+                }
+                
+            } catch (fallbackErr) {
+                console.error('Error con fallback copy:', fallbackErr);
+                mostrarMensaje('❌ Error al copiar el link', 'error');
+            }
+        }
+    }
+
+    // Configurar botones de copiar
+    function configurarBotonesCopiar() {
+        // Botón copiar en turno existente
+        const btnCopiarExistente = document.getElementById('btnCopiarLinkExistente');
+        if (btnCopiarExistente) {
+            btnCopiarExistente.addEventListener('click', function() {
+                const linkElement = document.getElementById('linkCancelar');
+                if (linkElement && linkElement.href !== '#') {
+                    copiarAlPortapapeles(linkElement.href, this);
+                } else {
+                    mostrarMensaje('No hay link disponible para copiar', 'error');
+                }
+            });
+        }
+        
+        // Botón copiar en confirmación
+        const btnCopiarConfirmacion = document.getElementById('btnCopiarLink');
+        if (btnCopiarConfirmacion) {
+            btnCopiarConfirmacion.addEventListener('click', function() {
+                const linkElement = document.getElementById('linkCancelacionFinal');
+                if (linkElement && linkElement.href !== '#') {
+                    copiarAlPortapapeles(linkElement.href, this);
+                } else {
+                    mostrarMensaje('No hay link disponible para copiar', 'error');
+                }
+            });
         }
     }
 
@@ -269,14 +415,20 @@ import Footer from '../components/Footer.astro';
         document.getElementById('seccionHorarios').classList.add('hidden');
         document.getElementById('seccionFormulario').classList.add('hidden');
         
+        // Actualizar datos
         document.getElementById('turnoFecha').textContent = new Date(turno.fecha).toLocaleDateString('es-AR');
         document.getElementById('turnoHora').textContent = turno.hora.substring(0, 5);
         document.getElementById('turnoServicio').textContent = `Servicio #${turno.servicio_id}`;
         document.getElementById('turnoCliente').textContent = turno.nombre_cliente;
         
+        // Actualizar link con formato acortado
         const linkCancelar = `${window.location.origin}/cancelar/${turno.token_cancelacion}`;
-        document.getElementById('linkCancelar').href = linkCancelar;
-        document.getElementById('linkCancelar').textContent = linkCancelar;
+        const linkElement = document.getElementById('linkCancelar');
+        linkElement.href = linkCancelar;
+        linkElement.textContent = acortarUrl(linkCancelar);
+        
+        // Re-configurar botones de copiado
+        configurarBotonesCopiar();
     }
 
     // Cargar servicios del backend
@@ -337,7 +489,7 @@ import Footer from '../components/Footer.astro';
                 
                 btn.type = 'button';
                 btn.textContent = nombreDia;
-                btn.className = `py-2 px-2 text-center transition-all duration-200 cursor-pointer border rounded text-sm sm:text-base ${
+                btn.className = `py-2 px-2 text-center transition-all duration-200 cursor-pointer border  text-md sm:text-base ${
                     fechaSeleccionada === fechaStr
                         ? 'bg-white text-black border-white'
                         : 'bg-[#101010] border-[#3d3d3d] text-white hover:bg-white hover:text-black hover:border-white'
@@ -394,9 +546,9 @@ import Footer from '../components/Footer.astro';
             
             if (horario.disponible) {
                 div.innerHTML = `
-                    <span class="text-white text-sm sm:text-base">${horario.hora}</span>
+                    <span class="text-white text-md sm:text-base">${horario.hora}</span>
                     <button 
-                        class="text-white hover:bg-white hover:text-black transition-colors duration-200 border border-white px-3 py-1 cursor-pointer w-full sm:w-auto text-sm"
+                        class="text-white hover:bg-white hover:text-black transition-colors duration-200 border border-white px-3 py-1 cursor-pointer w-full sm:w-auto text-md"
                         onclick="seleccionarHora('${horario.hora}')"
                     >
                         Reservar
@@ -404,8 +556,8 @@ import Footer from '../components/Footer.astro';
                 `;
             } else {
                 div.innerHTML = `
-                    <span class="text-white text-sm sm:text-base">${horario.hora}</span>
-                    <span class="text-[#8f8f8f] px-3 py-1 text-sm text-center w-full sm:w-auto">— Reservado —</span>
+                    <span class="text-white text-md sm:text-base">${horario.hora}</span>
+                    <span class="text-[#8f8f8f] px-3 py-1 text-md text-center w-full sm:w-auto">— Reservado —</span>
                 `;
             }
             
@@ -459,31 +611,13 @@ import Footer from '../components/Footer.astro';
                 return;
             }
             
-            // Mostrar confirmación
-            mostrarConfirmacion(data.turno);
+            // Recargar la página para mostrar el estado actualizado
+            window.location.reload();
+            
         } catch (error) {
             console.error('Error:', error);
             mostrarMensaje('Error al reservar', 'error');
         }
-    }
-
-    // Mostrar confirmación
-    function mostrarConfirmacion(turno) {
-        // Guardar el turno en localStorage para referencia
-        localStorage.setItem('turno_actual', JSON.stringify(turno));
-        
-        document.getElementById('seccionFecha').classList.add('hidden');
-        document.getElementById('seccionHorarios').classList.add('hidden');
-        document.getElementById('seccionFormulario').classList.add('hidden');
-        document.getElementById('seccionConfirmacion').classList.remove('hidden');
-        
-        document.getElementById('confirmFecha').textContent = new Date(turno.fecha).toLocaleDateString('es-AR');
-        document.getElementById('confirmHora').textContent = turno.hora.substring(0, 5);
-        document.getElementById('confirmServicio').textContent = `Servicio #${turno.servicio_id}`;
-        
-        const linkCancelacion = `${window.location.origin}/cancelar/${turno.token_cancelacion}`;
-        document.getElementById('linkCancelacionFinal').href = linkCancelacion;
-        document.getElementById('linkCancelacionFinal').textContent = linkCancelacion;
     }
 
     // Cancelar turno existente
@@ -513,51 +647,33 @@ import Footer from '../components/Footer.astro';
                 return;
             }
             
-            mostrarMensaje("<i class='bx bx-check'></i> Turno cancelado correctamente", 'success');
+            // Recargar la página para mostrar el estado actualizado
+            window.location.reload();
             
-            // Esperar 2 segundos y verificar turno de nuevo
-            setTimeout(async () => {
-                console.log('Verificando turno después de cancelación...');
-                await verificarTurnoActivo();
-            }, 2000);
         } catch (error) {
             console.error('Error:', error);
             mostrarMensaje('Error al cancelar el turno', 'error');
         }
     }
 
-    // Reiniciar formulario
-    function reiniciarFormulario() {
-        fechaSeleccionada = null;
-        horaSeleccionada = null;
-        semanaActual = 0;
-        
-        // Limpiar localStorage del turno actual
-        localStorage.removeItem('turno_actual');
-        
-        document.getElementById('seccionConfirmacion').classList.add('hidden');
-        document.getElementById('seccionFecha').classList.remove('hidden');
-        document.getElementById('seccionHorarios').classList.remove('hidden');
-        document.getElementById('seccionFormulario').classList.remove('hidden');
-        
-        document.getElementById('formReserva').reset();
-        renderizarSemana();
-    }
-
     // Mostrar mensajes
     function mostrarMensaje(texto, tipo) {
         const div = document.getElementById('messageDiv');
-        div.textContent = texto;
-        div.className = `mb-6 p-4 rounded text-sm ${
+        div.innerHTML = texto;
+        div.className = `mb-6 p-4  text-md ${
             tipo === 'error' ? 'bg-red-900 text-red-200' :
             tipo === 'success' ? 'bg-green-900 text-green-200' :
             'bg-blue-900 text-blue-200'
         }`;
         div.classList.remove('hidden');
         
-        setTimeout(() => {
-            div.classList.add('hidden');
-        }, 3000);
+        // Solo ocultar mensajes después de un tiempo si no son críticos
+        // Los mensajes de éxito/error importantes se mantienen hasta recargar
+        if (tipo !== 'success') {
+            setTimeout(() => {
+                div.classList.add('hidden');
+            }, 3000);
+        }
     }
 
     // Exponer función global para botones
