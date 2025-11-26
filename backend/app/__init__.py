@@ -26,11 +26,13 @@ def create_app():
     from app.business.routes import business_bp
     from app.services.routes import servicios_bp
     from app.appointments.routes import appointments_bp
+    from app.management.routes import management_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(business_bp)
     app.register_blueprint(servicios_bp)
     app.register_blueprint(appointments_bp)
+    app.register_blueprint(management_bp)
     
     # Crear tablas
     with app.app_context():

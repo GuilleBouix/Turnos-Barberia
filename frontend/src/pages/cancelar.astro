@@ -1,0 +1,182 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+// Obtenemos el token de los parámetros de la URL
+const { token } = Astro.params;
+---
+
+<Layout title="Cancelar Turno">
+	<Navbar />
+    <section class="min-h-screen flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="w-full max-w-2xl mx-auto">
+            <!-- Contenedor principal -->
+            <div class="bg-[#101010] border border-[#3d3d3d] text-white p-6 sm:p-8 rounded">
+                
+                <!-- Encabezado -->
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold font-playfair mb-2">Cancelar Turno</h1>
+                    <p class="text-[#8f8f8f]">¿Estás seguro de que deseas cancelar tu turno?</p>
+                </div>
+
+                <!-- Mensaje de estado (inicialmente oculto) -->
+                <div id="messageDiv" class="hidden mb-6 p-4 rounded text-sm"></div>
+
+                <!-- Contenedor de carga -->
+                <div id="loadingDiv" class="text-center text-[#8f8f8f] mb-6">
+                    Verificando turno...
+                </div>
+
+                <!-- Contenedor de detalles del turno -->
+                <div id="turnoDetails" class="hidden bg-[#1a1a1a] border border-[#3d3d3d] p-6 rounded mb-6">
+                    <h3 class="text-xl font-semibold text-white mb-4">Detalles del Turno</h3>
+                    
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-[#8f8f8f]">Fecha:</span>
+                            <span class="text-white font-semibold" id="detallesFecha"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-[#8f8f8f]">Hora:</span>
+                            <span class="text-white font-semibold" id="detallesHora"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-[#8f8f8f]">Cliente:</span>
+                            <span class="text-white font-semibold" id="detallesCliente"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-[#8f8f8f]">Teléfono:</span>
+                            <span class="text-white font-semibold" id="detallesTelefono"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-[#8f8f8f]">Servicio:</span>
+                            <span class="text-white font-semibold" id="detallesServicio"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones de acción -->
+                <div id="botonesAccion" class="flex flex-col sm:flex-row gap-4">
+                    <button 
+                        id="btnConfirmarCancelacion"
+                        class="flex-1 bg-red-600 hover:bg-red-700 text-white px-6 py-3 font-semibold rounded transition-colors"
+                    >
+                        Confirmar Cancelación
+                    </button>
+                    <button 
+                        id="btnVolverAtras"
+                        class="flex-1 bg-[#3d3d3d] hover:bg-[#4d4d4d] text-white px-6 py-3 font-semibold rounded transition-colors"
+                    >
+                        Volver
+                    </button>
+                </div>
+
+                <!-- Mensaje de éxito -->
+                <div id="exitoDiv" class="hidden bg-green-900 border border-green-700 p-6 rounded text-center">
+                    <h3 class="text-2xl font-bold text-green-200 mb-2">✓ Turno Cancelado</h3>
+                    <p class="text-green-100 mb-4">Tu turno ha sido cancelado exitosamente.</p>
+                    <a href="/" class="inline-block bg-white text-black px-6 py-2 font-semibold rounded hover:bg-gray-200 transition">
+                        Volver al Inicio
+                    </a>
+                </div>
+
+                <!-- Mensaje de error -->
+                <div id="errorDiv" class="hidden bg-red-900 border border-red-700 p-6 rounded text-center">
+                    <h3 class="text-2xl font-bold text-red-200 mb-2">✗ Error</h3>
+                    <p id="errorTexto" class="text-red-100 mb-4"></p>
+                    <a href="/" class="inline-block bg-white text-black px-6 py-2 font-semibold rounded hover:bg-gray-200 transition">
+                        Volver al Inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+	<Footer />
+</Layout>
+
+<script define:vars={{ token }}>
+    // El token viene como variable de Astro
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        await cargarTurno();
+    });
+
+    // Cargar datos del turno
+    async function cargarTurno() {
+        try {
+            // Llamamos a una ruta de backend que obtiene el turno por token
+            const response = await fetch(`http://localhost:5000/api/appointments/turno-por-token/${token}`);
+            const data = await response.json();
+
+            if (!data.success || !data.turno) {
+                mostrarError('Token inválido o turno no encontrado');
+                return;
+            }
+
+            // Si el turno ya está cancelado
+            if (data.turno.estado !== 'reservado') {
+                mostrarError('Este turno ya ha sido cancelado o completado');
+                return;
+            }
+
+            // Mostrar detalles del turno
+            const fecha = new Date(data.turno.fecha + 'T00:00:00');
+            document.getElementById('detallesFecha').textContent = fecha.toLocaleDateString('es-AR');
+            document.getElementById('detallesHora').textContent = data.turno.hora.substring(0, 5);
+            document.getElementById('detallesCliente').textContent = data.turno.nombre_cliente;
+            document.getElementById('detallesTelefono').textContent = data.turno.telefono_cliente;
+            document.getElementById('detallesServicio').textContent = `Servicio #${data.turno.servicio_id}`;
+
+            // Guardar el turno en variable global para usar después
+            window.turnoActual = data.turno;
+
+            // Ocultar carga, mostrar detalles y botones
+            document.getElementById('loadingDiv').classList.add('hidden');
+            document.getElementById('turnoDetails').classList.remove('hidden');
+            document.getElementById('botonesAccion').classList.remove('hidden');
+
+            // Listeners de botones
+            document.getElementById('btnConfirmarCancelacion').addEventListener('click', confirmarCancelacion);
+            document.getElementById('btnVolverAtras').addEventListener('click', () => window.history.back());
+        } catch (error) {
+            console.error('Error:', error);
+            mostrarError('Error al cargar el turno. Intenta más tarde.');
+        }
+    }
+
+    // Confirmar cancelación
+    async function confirmarCancelacion() {
+        try {
+            const response = await fetch('http://localhost:5000/api/appointments/cancelar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token_cancelacion: token })
+            });
+
+            const data = await response.json();
+
+            if (!data.success) {
+                mostrarError(data.mensaje || 'Error al cancelar el turno');
+                return;
+            }
+
+            // Mostrar éxito
+            document.getElementById('turnoDetails').classList.add('hidden');
+            document.getElementById('botonesAccion').classList.add('hidden');
+            document.getElementById('exitoDiv').classList.remove('hidden');
+        } catch (error) {
+            console.error('Error:', error);
+            mostrarError('Error al cancelar el turno. Intenta más tarde.');
+        }
+    }
+
+    // Mostrar error
+    function mostrarError(mensaje) {
+        document.getElementById('loadingDiv').classList.add('hidden');
+        document.getElementById('turnoDetails').classList.add('hidden');
+        document.getElementById('botonesAccion').classList.add('hidden');
+        document.getElementById('errorTexto').textContent = mensaje;
+        document.getElementById('errorDiv').classList.remove('hidden');
+    }
+</script>

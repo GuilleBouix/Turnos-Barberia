@@ -1,50 +1,382 @@
-<!-- Tab para gestionar turnos -->
-<div id="content-turnos" class="tab-content hidden p-4 bg-[#101010] border border-[#3d3d3d]">
-    <!-- Título -->
-    <div class="border-b border-[#3d3d3d] pb-3 mb-4">
-        <h4 class="text-xl font-bold">GESTIONAR TURNOS</h4>
+<div id="content-turnos" class="tab-content hidden p-6 bg-[#101010] border border-[#3d3d3d]">
+    <!-- Encabezado -->
+    <div class="border-b border-[#3d3d3d] pb-4 mb-6">
+        <h4 class="text-2xl font-bold mb-1">GESTIONAR TURNOS</h4>
+        <p class="text-[#8f8f8f] text-md">Administra y gestiona los turnos de tu barbería</p>
     </div>
+
+    <!-- Mensaje de estado -->
+    <div id="messageDiv" class="hidden mb-4 p-4"></div>
 
     <!-- Filtro de fecha -->
-    <div class="mb-4">
-        <label class="block text-sm text-[#8f8f8f] mb-2">Fecha:</label>
-        <input type="date" value="2025-11-23" class="p-2 bg-[#1a1a1a] border border-[#3d3d3d] text-white">
+    <div class="bg-[#1a1a1a] border border-[#3d3d3d] p-4 mb-6">
+        <h5 class="text-lg font-semibold mb-3">Filtrar Turnos</h5>
+        <div class="flex flex-col sm:flex-row gap-4 items-end">
+            <div class="flex-1">
+                <label class="block text-[#8f8f8f] text-md mb-2">Filtrar por fecha:</label>
+                <input 
+                    type="date" 
+                    id="filtroFecha"
+                    class="w-full p-3 bg-[#0a0a0a] border border-[#3d3d3d] text-white focus:border-white transition-colors duration-200"
+                />
+            </div>
+            <div class="flex gap-2">
+                <button 
+                    id="btnFiltrar"
+                    class="bg-white text-black px-6 py-3 hover:bg-gray-200 transition-colors duration-200 cursor-pointer"
+                >
+                    Filtrar
+                </button>
+                <button 
+                    id="btnLimpiarFiltro"
+                    class="border border-white text-white px-6 py-3 hover:bg-white hover:text-black transition-colors duration-200 cursor-pointer"
+                >
+                    Limpiar Filtros
+                </button>
+            </div>
+        </div>
     </div>
 
-    <!-- Tabla de turnos -->
-    <div class="bg-[#1a1a1a] border border-[#3d3d3d] overflow-x-auto">
-        <table class="w-full">
-            <thead>
-                <tr class="border-b border-[#3d3d3d]">
-                    <th class="text-left p-3 text-sm font-semibold">Hora</th>
-                    <th class="text-left p-3 text-sm font-semibold">Cliente</th>
-                    <th class="text-left p-3 text-sm font-semibold">Servicio</th>
-                    <th class="text-left p-3 text-sm font-semibold">Estado</th>
-                    <th class="text-left p-3 text-sm font-semibold">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Filas -->
-                <tr class="border-b border-[#3d3d3d] hover:bg-[#252525]">
-                    <td class="p-3">09:30</td>
-                    <td class="p-3">Carla Gómez</td>
-                    <td class="p-3">Corte y Barba</td>
-                    <td class="p-3">
-                        <span class="text-green-400">Confirmado</span>
-                    </td>
-                    <td class="p-3">
-                        <div class="flex space-x-2">
-                            <button class="text-green-400 hover:text-white text-sm border border-green-400 px-2 py-1 hover:bg-green-400 transition-colors cursor-pointer">
-                                <i class='bx bx-check'></i>
-                            </button>
+    <!-- Información de turnos -->
+    <div class="bg-[#1a1a1a] border border-[#3d3d3d] p-4 mb-4">
+        <div class="flex flex-wrap gap-6 text-md">
+            <div>
+                <span class="text-[#8f8f8f]">Total de turnos:</span>
+                <span id="totalTurnos" class="ml-2 font-semibold">0</span>
+            </div>
+            <div>
+                <span class="text-[#8f8f8f]">Reservados:</span>
+                <span id="turnosReservados" class="ml-2 font-semibold text-cyan-400">0</span>
+            </div>
+            <div>
+                <span class="text-[#8f8f8f]">Completados:</span>
+                <span id="turnosCompletados" class="ml-2 font-semibold text-green-400">0</span>
+            </div>
+        </div>
+    </div>
 
-                            <button class="text-red-400 hover:text-white text-sm border border-red-400 px-2 py-1 hover:bg-red-400 transition-colors cursor-pointer">
-                                <i class='bx bx-trash-alt'></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- Tabla de turnos - Responsive -->
+    <div class="bg-[#1a1a1a] border border-[#3d3d3d] overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b border-[#3d3d3d] bg-[#0a0a0a]">
+                        <th class="text-left p-3 font-semibold">Fecha</th>
+                        <th class="text-left p-3 font-semibold">Hora</th>
+                        <th class="text-left p-3 font-semibold">Cliente</th>
+                        <th class="text-left p-3 font-semibold hidden md:table-cell">Teléfono</th>
+                        <th class="text-left p-3 font-semibold">Servicio</th>
+                        <th class="text-left p-3 font-semibold hidden lg:table-cell">Categoría</th>
+                        <th class="text-left p-3 font-semibold hidden sm:table-cell">Precio</th>
+                        <th class="text-left p-3 font-semibold">Estado</th>
+                        <th class="text-left p-3 font-semibold">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="turnosTableBody">
+                    <tr>
+                        <td colspan="9" class="p-8 text-center text-[#8f8f8f]">
+                            <div class="animate-pulse">Cargando turnos...</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
+
+<script type="module">
+    document.addEventListener('DOMContentLoaded', function() {
+        // Cargar turnos al iniciar
+        cargarTurnos();
+        
+        // Event listeners
+        document.getElementById('btnFiltrar').addEventListener('click', aplicarFiltro);
+        document.getElementById('btnLimpiarFiltro').addEventListener('click', limpiarFiltro);
+        document.getElementById('filtroFecha').addEventListener('change', function() {
+            if (this.value) {
+                aplicarFiltro();
+            }
+        });
+        
+        // Poner fecha de hoy por defecto
+        const hoy = new Date().toISOString().split('T')[0];
+        document.getElementById('filtroFecha').value = hoy;
+    });
+
+    // Variable global para guardar el filtro actual
+    let filtroActual = null;
+
+    // Cargar turnos desde la API
+    async function cargarTurnos(fecha = null) {
+        try {
+            const token = localStorage.getItem('jwtToken');
+            if (!token) {
+                mostrarMensaje('No hay sesión activa', 'error');
+                return;
+            }
+
+            let url = 'http://localhost:5000/api/management/turnos';
+            if (fecha) {
+                // Ajustar la fecha para que sea en horario local (sin problema de timezone)
+                const fechaAjustada = new Date(fecha + 'T00:00:00');
+                const fechaISO = fechaAjustada.toISOString().split('T')[0];
+                url += `?fecha=${fechaISO}`;
+                filtroActual = fechaISO;
+            } else {
+                filtroActual = null;
+            }
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al cargar turnos');
+            }
+
+            const data = await response.json();
+            
+            if (data.success) {
+                renderizarTurnos(data.turnos);
+                actualizarEstadisticas(data.turnos);
+                mostrarMensaje(`${data.total} turnos cargados`, 'success');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            mostrarMensaje('Error al cargar los turnos', 'error');
+            document.getElementById('turnosTableBody').innerHTML = `
+                <tr>
+                    <td colspan="9" class="p-8 text-center text-red-400">
+                        Error al cargar los turnos
+                    </td>
+                </tr>
+            `;
+        }
+    }
+
+    // Renderizar tabla de turnos - Responsive
+    function renderizarTurnos(turnos) {
+        const tbody = document.getElementById('turnosTableBody');
+        
+        if (turnos.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="9" class="p-8 text-center text-[#8f8f8f]">
+                        No hay turnos para mostrar
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = turnos.map(turno => `
+            <tr class="border-b border-[#3d3d3d] hover:bg-[#0a0a0a] transition-colors duration-200">
+                <td class="p-3">
+                    <div class="font-medium">${formatearFecha(turno.fecha)}</div>
+                </td>
+                <td class="p-3">
+                    <div class="font-semibold">${formatearHora(turno.hora)}</div>
+                </td>
+                <td class="p-3">
+                    <div class="font-medium">${turno.nombre_cliente}</div>
+                    <div class="text-[#8f8f8f] md:hidden">${turno.telefono_cliente}</div>
+                </td>
+                <td class="p-3 hidden md:table-cell">
+                    ${turno.telefono_cliente}
+                </td>
+                <td class="p-3">
+                    <div class="font-medium">${turno.nombre_servicio}</div>
+                    <div class="text-[#8f8f8f] lg:hidden">${turno.categoria_servicio}</div>
+                    <div class="text-[#8f8f8f] sm:hidden">$${turno.precio_servicio}</div>
+                </td>
+                <td class="p-3 hidden lg:table-cell text-[#8f8f8f]">
+                    ${turno.categoria_servicio}
+                </td>
+                <td class="p-3 hidden sm:table-cell font-semibold">
+                    $${turno.precio_servicio}
+                </td>
+                <td class="p-3">
+                    <span class="estado-badge ${getClaseEstado(turno.estado)}">
+                        ${formatearEstado(turno.estado)}
+                    </span>
+                </td>
+                <td class="p-3">
+                    <div class="flex gap-1">
+                        ${turno.estado !== 'completado' ? `
+                            <button 
+                                class="completar-turno text-green-500 px-2 py-1 hover:bg-green-700 hover:text-white transition-colors duration-200 cursor-pointer border border-green-700"
+                                data-id="${turno.id}"
+                                title="Marcar como completado"
+                            >
+                                <i class='bx bx-check'></i>
+                            </button>
+                        ` : ''}
+                        <button 
+                            class="eliminar-turno text-red-500 px-2 py-1 hover:bg-red-700 hover:text-white transition-colors duration-200 cursor-pointer border border-red-700"
+                            data-id="${turno.id}"
+                            title="Eliminar turno"
+                        >
+                            <i class='bx bx-trash-alt'></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+
+        // Agregar event listeners a los botones
+        document.querySelectorAll('.completar-turno').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const turnoId = this.getAttribute('data-id');
+                completarTurno(turnoId);
+            });
+        });
+
+        document.querySelectorAll('.eliminar-turno').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const turnoId = this.getAttribute('data-id');
+                eliminarTurno(turnoId);
+            });
+        });
+    }
+
+    // Completar turno
+    async function completarTurno(turnoId) {
+        if (!confirm('¿Marcar este turno como completado?')) return;
+
+        try {
+            const token = localStorage.getItem('jwtToken');
+            const response = await fetch(`http://localhost:5000/api/management/turnos/${turnoId}/completar`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.mensaje || 'Error al completar turno');
+            }
+
+            mostrarMensaje('Turno marcado como completado', 'success');
+            // Recargar con el mismo filtro que estaba aplicado
+            cargarTurnos(filtroActual);
+
+        } catch (error) {
+            console.error('Error:', error);
+            mostrarMensaje(`${error.message}`, 'error');
+        }
+    }
+
+    // Eliminar turno
+    async function eliminarTurno(turnoId) {
+        if (!confirm('¿Estás seguro de que deseas eliminar este turno?')) return;
+
+        try {
+            const token = localStorage.getItem('jwtToken');
+            const response = await fetch(`http://localhost:5000/api/management/turnos/${turnoId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.mensaje || 'Error al eliminar turno');
+            }
+
+            mostrarMensaje('Turno eliminado correctamente', 'success');
+            // Recargar con el mismo filtro que estaba aplicado
+            cargarTurnos(filtroActual);
+
+        } catch (error) {
+            console.error('Error:', error);
+            mostrarMensaje(`${error.message}`, 'error');
+        }
+    }
+
+    // Aplicar filtro de fecha
+    function aplicarFiltro() {
+        const fecha = document.getElementById('filtroFecha').value;
+        if (fecha) {
+            cargarTurnos(fecha);
+        } else {
+            cargarTurnos();
+        }
+    }
+
+    // Limpiar filtro
+    function limpiarFiltro() {
+        document.getElementById('filtroFecha').value = '';
+        cargarTurnos();
+    }
+
+    // Actualizar estadísticas
+    function actualizarEstadisticas(turnos) {
+        const total = turnos.length;
+        const reservados = turnos.filter(t => 
+            t.estado === 'pendiente' || 
+            t.estado === 'confirmado' || 
+            t.estado === 'reservado'
+        ).length;
+        const completados = turnos.filter(t => t.estado === 'completado').length;
+
+        document.getElementById('totalTurnos').textContent = total;
+        document.getElementById('turnosReservados').textContent = reservados;
+        document.getElementById('turnosCompletados').textContent = completados;
+    }
+
+    // Funciones de formato
+    function formatearFecha(fechaStr) {
+        const fecha = new Date(fechaStr);
+        return fecha.toLocaleDateString('es-ES');
+    }
+
+    function formatearHora(horaStr) {
+        return horaStr.substring(0, 5); // Formato HH:MM
+    }
+
+    function formatearEstado(estado) {
+        const estados = {
+            'pendiente': 'Pendiente',
+            'confirmado': 'Confirmado', 
+            'reservado': 'Reservado',
+            'completado': 'Completado',
+            'cancelado': 'Cancelado'
+        };
+        return estados[estado] || estado.charAt(0).toUpperCase() + estado.slice(1);
+    }
+
+    function getClaseEstado(estado) {
+        const clases = {
+            'pendiente': 'bg-yellow-900 border-yellow-400 text-yellow-200',
+            'confirmado': 'bg-blue-900 border-blue-400 text-blue-200',
+            'reservado': 'bg-cyan-900 border-cyan-400 text-cyan-200',
+            'completado': 'bg-green-900 border-green-400 text-green-200',
+            'cancelado': 'bg-red-900 border-red-400 text-red-200'
+        };
+        return `px-2 py-1 text-xs border ${clases[estado] || 'bg-gray-900 border-gray-400 text-gray-200'}`;
+    }
+
+    // Mostrar mensajes
+    function mostrarMensaje(texto, tipo) {
+        const div = document.getElementById('messageDiv');
+        div.textContent = texto;
+        div.className = `mb-4 p-4 text-md ${
+            tipo === 'error' ? 'bg-red-900 text-red-200' :
+            tipo === 'success' ? 'bg-green-900 text-green-200' :
+            'bg-blue-900 text-blue-200'
+        }`;
+        div.classList.remove('hidden');
+
+        setTimeout(() => {
+            div.classList.add('hidden');
+        }, 4000);
+    }
+</script>
